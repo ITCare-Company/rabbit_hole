@@ -1,18 +1,18 @@
 <?php
 
-namespace Drupal\rh_node\Tests;
+namespace Drupal\Tests\rh_node\Functional;
 
-use Drupal\simpletest\WebTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\Entity\Node;
 use Drupal\rabbit_hole\Entity\BehaviorSettings;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Test the functionality of the rabbit hole form additions to the node form.
  *
  * @group rh_node
  */
-class BehaviorSettingsFormAlterationsTest extends WebTestBase {
+class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
   const TEST_CONTENT_TYPE_ID = 'rh_node_test_content_type';
   const CONTENT_TYPE_PATH_PREFIX = 'admin/structure/types/manage/';
   const CONTENT_ADD_PREFIX = 'node/add/';

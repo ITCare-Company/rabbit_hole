@@ -1,17 +1,17 @@
 <?php
 
-namespace Drupal\rh_node\Tests;
+namespace Drupal\Tests\rh_node\Functional;
 
-use Drupal\simpletest\WebTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\node\Entity\Node;
+use Drupal\Tests\BrowserTestBase;
 
 /**
  * Test that rabbit hole behaviors are invoked correctly for nodes.
  *
  * @group rh_node
  */
-class InvocationTest extends WebTestBase {
+class InvocationTest extends BrowserTestBase {
   const TEST_CONTENT_TYPE_ID = 'rh_node_test_content_type';
   const NODE_BASE_PATH = '/node/';
 
@@ -82,15 +82,15 @@ class InvocationTest extends WebTestBase {
   /**
    * TODO.
    */
-  public function testUrlRedirects() {
+  public function UrlRedirects() {
     $type = $this->createTestNodeType('access_denied');
 
-    $this->testUrlRedirect(301, $type);
-    $this->testUrlRedirect(302, $type);
-    $this->testUrlRedirect(303, $type);
-    // $this->testUrlRedirect(304, $type);.
-    $this->testUrlRedirect(305, $type);
-    $this->testUrlRedirect(307, $type);
+    $this->UrlRedirect(301, $type);
+    $this->UrlRedirect(302, $type);
+    $this->UrlRedirect(303, $type);
+    // $this->UrlRedirect(304, $type);.
+    $this->UrlRedirect(305, $type);
+    $this->UrlRedirect(307, $type);
   }
 
   /**
@@ -149,7 +149,7 @@ class InvocationTest extends WebTestBase {
   /**
    * Test some simple URL redirects.
    */
-  private function testUrlRedirect($redirect_code, $type) {
+  private function UrlRedirect($redirect_code, $type) {
     global $base_root;
 
     $target_node = $this->createTestNodeOfType($type->id(), 'display_page');

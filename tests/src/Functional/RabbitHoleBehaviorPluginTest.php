@@ -1,22 +1,28 @@
 <?php
 
-namespace Drupal\rabbit_hole\Tests;
+namespace Drupal\Tests\rabbit_hole\Functional;
 
-use Drupal\system\Tests\Plugin\PluginTestBase;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
+use Drupal\Tests\views\Functional\ViewTestBase;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Test the functionality of the RabbitHoleBehavior plugin.
  *
  * @group rabbit_hole
  */
-class RabbitHoleBehaviorPluginTest extends PluginTestBase {
+class RabbitHoleBehaviorPluginTest extends ViewTestBase {
+  const TEST_CONTENT_TYPE_ID = 'rh_test_content_type';
+  const TEST_NODE_NAME = 'rh_test_node';
 
   /**
    * Modules to enable.
    *
    * @var array
    */
-  public static $modules = ['rabbit_hole'];
+  public static $modules = ['rabbit_hole', 'node'];
 
   /**
    * The plugin manager.
@@ -26,11 +32,22 @@ class RabbitHoleBehaviorPluginTest extends PluginTestBase {
   private $manager;
 
   /**
+   * An entity to test with.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface
+   */
+  private $entity;
+
+  /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    parent::setUp();
+  protected function setUp($import_test_views = TRUE) {
+    parent::setUp(FALSE);
     $this->manager = $this->container->get('plugin.manager.rabbit_hole_behavior_plugin');
+
+    // Create a content type and entity to test with.
+    $this->createTestContentType();
+    $this->entity = $this->createTestEntity();
   }
 
   /**
@@ -74,8 +91,8 @@ class RabbitHoleBehaviorPluginTest extends PluginTestBase {
     $this->assertEqual($form_state, [], 'Access denied plugin settings form state was not changed.');
 
     // Check that the plugin performs the expected action.
-    // TODO: Check that $plugin->performAction() throws a
-    // \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException.
+    $this->expectException(AccessDeniedHttpException::class);
+    $plugin->performAction($this->entity);
   }
 
   /**
@@ -93,8 +110,7 @@ class RabbitHoleBehaviorPluginTest extends PluginTestBase {
     $this->assertEqual($form_state, [], 'Display page plugin settings form state was not changed.');
 
     // Check that the plugin performs the expected action.
-    // TODO: Check that $plugin->performAction() throws nothing and returns
-    // nothing.
+    $this->assertEmpty($plugin->performAction($this->entity));
   }
 
   /**
@@ -112,12 +128,12 @@ class RabbitHoleBehaviorPluginTest extends PluginTestBase {
     $this->assertEqual($form_state, [], 'Page not found plugin settings form state was not changed.');
 
     // Check that the plugin performs the expected action.
-    // TODO: Check that $plugin->performAction() throws a
-    // \Symfony\Component\HttpKernel\Exception\NotFoundHttpException.
+    $this->expectException(NotFoundHttpException::class);
+    $plugin->performAction($this->entity);
   }
 
   /**
-   * Test the page redirect plugin.
+   * Test the page redirect plugin to the frontpage.
    */
   public function testPageRedirectPlugin() {
     // Check we can create an instance of the plugin.
@@ -126,13 +142,52 @@ class RabbitHoleBehaviorPluginTest extends PluginTestBase {
 
     // Test the settings form.
     $form = $form_state = [];
-    $plugin->settingsForm($form, $form_state, 'test');
+    $plugin->settingsForm($form, $form_state, 'test', $this->entity);
     $this->assertNotEqual($form, [], 'Page redirect plugin defines a settings form.');
     $this->assertEqual($form_state, [], 'Page redirect plugin form state was not changed.');
 
     // Check that the plugin performs the expected action.
     // TODO: Check that $plugin->performAction() does what it's supposed to,
     // whatever that is.
+  }
+
+  /**
+   * Create a content type for testing.
+   *
+   * @return int|string|null
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  private function createTestContentType() {
+    $node_type = NodeType::create(
+      [
+        'type' => self::TEST_CONTENT_TYPE_ID,
+        'name' => self::TEST_CONTENT_TYPE_ID,
+      ]
+    );
+    $node_type->save();
+
+    return $node_type;
+  }
+
+  /**
+   * Create an entity for testing.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\node\Entity\Node
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  private function createTestEntity() {
+    $node = Node::create(
+      [
+        'nid' => NULL,
+        'type' => self::TEST_CONTENT_TYPE_ID,
+        'title' => 'Test Behavior Settings Node',
+      ]
+    );
+    $node->save();
+
+    return $node;
   }
 
 }
