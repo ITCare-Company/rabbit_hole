@@ -4,7 +4,7 @@ namespace Drupal\rabbit_hole;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Session\AccountProxy;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager;
 use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginInterface;
 use Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginManager;
@@ -46,7 +46,7 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
   /**
    * The current user.
    *
-   * @var Drupal\Core\Session\AccountProxy
+   * @var Drupal\Core\Session\AccountProxy\AccountProxyInterface
    */
   protected $currentUser;
 
@@ -58,7 +58,7 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
     RabbitHoleBehaviorPluginManager $plugin_manager_rabbit_hole_behavior_plugin,
     RabbitHoleEntityPluginManager $plugin_manager_rabbit_hole_entity_plugin,
     EntityExtender $entity_extender,
-    AccountProxy $current_user
+    AccountProxyInterface $current_user
   ) {
     $this->rhBehaviorSettingsManager = $rabbit_hole_behavior_settings_manager;
     $this->rhBehaviorPluginManager = $plugin_manager_rabbit_hole_behavior_plugin;
