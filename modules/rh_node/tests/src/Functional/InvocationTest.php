@@ -16,6 +16,11 @@ class InvocationTest extends BrowserTestBase {
   const NODE_BASE_PATH = '/node/';
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array

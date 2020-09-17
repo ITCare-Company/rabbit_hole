@@ -19,6 +19,15 @@ use Drupal\Tests\BrowserTestBase;
  * https://www.drupal.org/node/2399999.
  */
 class RabbitHoleBehaviorSettingsEntityMethodsTest extends BrowserTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['rabbit_hole'];
 
   /**
@@ -71,7 +80,7 @@ class RabbitHoleBehaviorSettingsEntityMethodsTest extends BrowserTestBase {
     $entity = $this->createGenericTestEntity();
     $action = 'page_not_found';
     $entity->setAction($action);
-    $this->assertTrue($action, $entity->getAction());
+    $this->assertEquals($action, $entity->getAction());
   }
 
   /**

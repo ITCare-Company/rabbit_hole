@@ -18,6 +18,11 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
   const TEST_NODE_NAME = 'rh_test_node';
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array

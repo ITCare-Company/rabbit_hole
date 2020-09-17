@@ -21,6 +21,11 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
   const DEFAULT_ACTION = 'bundle_default';
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * Modules to enable.
    *
    * @var array
