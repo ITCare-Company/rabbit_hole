@@ -72,13 +72,13 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
     // Check that the plugins defined by the rabbit_hole module are in the list
     // of plugins.
     $this->assertTrue($this->manager->hasDefinition('access_denied'), 'There is an access denied plugin');
-    $this->assertTrue(isset($behaviors['access_denied']['label']), 'The access denied plugin has a label');
+    $this->assertArrayHasKey('label', $behaviors['access_denied'], 'The access denied plugin has a label');
     $this->assertTrue($this->manager->hasDefinition('display_page'), 'There is a display the page plugin');
-    $this->assertTrue(isset($behaviors['display_page']['label']), 'The display the page plugin has a label');
+    $this->assertArrayHasKey('label', $behaviors['display_page'], 'The display the page plugin has a label');
     $this->assertTrue($this->manager->hasDefinition('page_not_found'), 'There is a page not found plugin');
-    $this->assertTrue(isset($behaviors['page_not_found']['label']), 'The page not found plugin has a label');
+    $this->assertArrayHasKey('label', $behaviors['page_not_found'], 'The page not found plugin has a label');
     $this->assertTrue($this->manager->hasDefinition('page_redirect'), 'There is a page redirect plugin');
-    $this->assertTrue(isset($behaviors['page_redirect']['label']), 'The page redirect plugin has a label');
+    $this->assertArrayHasKey('label', $behaviors['page_redirect'], 'The page redirect plugin has a label');
   }
 
   /**
