@@ -173,6 +173,7 @@ class FormManglerService {
       '#title' => $this->t('Rabbit Hole settings'),
       '#collapsed' => FALSE,
       '#collapsible' => TRUE,
+      '#weight' => 10,
 
       // TODO: Should probably handle group in a plugin - not sure if, e.g.,
       // files will work in the same way and even if they do later entities
