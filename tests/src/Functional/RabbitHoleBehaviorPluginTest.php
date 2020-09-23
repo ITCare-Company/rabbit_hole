@@ -7,6 +7,11 @@ use Drupal\node\Entity\NodeType;
 use Drupal\Tests\views\Functional\ViewTestBase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager;
+use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin\AccessDenied;
+use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin\DisplayPage;
+use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin\PageNotFound;
+use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin\PageRedirect;
 
 /**
  * Test the functionality of the RabbitHoleBehavior plugin.
@@ -63,11 +68,11 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
     $this->assertNotNull($this->manager, 'Drupal plugin service returned a rabbit hole behavior service.');
 
     // Check that the behavior plugin manager is the type we expect.
-    $this->assertEqual(get_class($this->manager), 'Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager');
+    $this->assertInstanceOf(RabbitHoleBehaviorPluginManager::class, $this->manager);
 
     // Check the rabbit_hole module defines the expected number of behaviors.
     $behaviors = $this->manager->getDefinitions();
-    $this->assertEqual(count($behaviors), 4, 'There are 4 behaviors.');
+    $this->assertCount(4, $behaviors, 'There are 4 behaviors.');
 
     // Check that the plugins defined by the rabbit_hole module are in the list
     // of plugins.
@@ -87,13 +92,13 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
   public function testAccessDeniedPlugin() {
     // Check we can create an instance of the plugin.
     $plugin = $this->manager->createInstance('access_denied', ['of' => 'configuration values']);
-    $this->assertEqual(get_class($plugin), 'Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin\AccessDenied', 'The access denied plugin is the correct type.');
+    $this->assertInstanceOf(AccessDenied::class, $plugin, 'The access denied plugin is the correct type.');
 
     // Test the settings form.
     $form = $form_state = [];
     $plugin->settingsForm($form, $form_state, 'test');
-    $this->assertEqual($form, [], 'Access denied plugin has no settings form.');
-    $this->assertEqual($form_state, [], 'Access denied plugin settings form state was not changed.');
+    $this->assertEmpty($form, 'Access denied plugin has no settings form.');
+    $this->assertEmpty($form_state, 'Access denied plugin settings form state was not changed.');
 
     // Check that the plugin performs the expected action.
     $this->expectException(AccessDeniedHttpException::class);
@@ -106,13 +111,13 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
   public function testDisplayPagePlugin() {
     // Check we can create an instance of the plugin.
     $plugin = $this->manager->createInstance('display_page', ['of' => 'configuration values']);
-    $this->assertEqual(get_class($plugin), 'Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin\DisplayPage', 'The display page plugin is the correct type.');
+    $this->assertInstanceOf(DisplayPage::class, $plugin, 'The display page plugin is the correct type.');
 
     // Test the settings form.
     $form = $form_state = [];
     $plugin->settingsForm($form, $form_state, 'test');
-    $this->assertEqual($form, [], 'Display page plugin has no settings form.');
-    $this->assertEqual($form_state, [], 'Display page plugin settings form state was not changed.');
+    $this->assertEmpty($form, 'Display page plugin has no settings form.');
+    $this->assertEmpty($form_state, 'Display page plugin settings form state was not changed.');
 
     // Check that the plugin performs the expected action.
     $this->assertEmpty($plugin->performAction($this->entity));
@@ -124,13 +129,13 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
   public function testPageNotFoundPlugin() {
     // Check we can create an instance of the plugin.
     $plugin = $this->manager->createInstance('page_not_found', ['of' => 'configuration values']);
-    $this->assertEqual(get_class($plugin), 'Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin\PageNotFound', 'The page not found plugin is the correct type.');
+    $this->assertInstanceOf(PageNotFound::class, $plugin, 'The page not found plugin is the correct type.');
 
     // Test the settings form.
     $form = $form_state = [];
     $plugin->settingsForm($form, $form_state, 'test');
-    $this->assertEqual($form, [], 'Page not found plugin has no settings form.');
-    $this->assertEqual($form_state, [], 'Page not found plugin settings form state was not changed.');
+    $this->assertEmpty($form, 'Page not found plugin has no settings form.');
+    $this->assertEmpty($form_state, 'Page not found plugin settings form state was not changed.');
 
     // Check that the plugin performs the expected action.
     $this->expectException(NotFoundHttpException::class);
@@ -143,13 +148,13 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
   public function testPageRedirectPlugin() {
     // Check we can create an instance of the plugin.
     $plugin = $this->manager->createInstance('page_redirect', ['of' => 'configuration values']);
-    $this->assertEqual(get_class($plugin), 'Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin\PageRedirect', 'The page redirect plugin is the correct type.');
+    $this->assertInstanceOf(PageRedirect::class, $plugin, 'The page redirect plugin is the correct type.');
 
     // Test the settings form.
     $form = $form_state = [];
     $plugin->settingsForm($form, $form_state, 'test', $this->entity);
-    $this->assertNotEqual($form, [], 'Page redirect plugin defines a settings form.');
-    $this->assertEqual($form_state, [], 'Page redirect plugin form state was not changed.');
+    $this->assertNotEmpty($form, 'Page redirect plugin defines a settings form.');
+    $this->assertEmpty($form_state, 'Page redirect plugin form state was not changed.');
 
     // Check that the plugin performs the expected action.
     // TODO: Check that $plugin->performAction() does what it's supposed to,

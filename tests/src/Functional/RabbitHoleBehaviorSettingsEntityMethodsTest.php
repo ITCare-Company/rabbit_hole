@@ -67,10 +67,10 @@ class RabbitHoleBehaviorSettingsEntityMethodsTest extends BrowserTestBase {
     $config_entity = $this->configFactory
       ->get('rabbit_hole.behavior_settings.test_behavior_settings');
 
-    $this->assertEqual($action, $config_entity->get('action'));
-    $this->assertEqual($redirect_code, $config_entity->get('redirect_code'));
-    $this->assertEqual($redirect, $config_entity->get('redirect'));
-    $this->assertEqual($allow_override, $config_entity->get('allow_override'));
+    $this->assertEquals($action, $config_entity->get('action'));
+    $this->assertEquals($redirect_code, $config_entity->get('redirect_code'));
+    $this->assertEquals($redirect, $config_entity->get('redirect'));
+    $this->assertEquals($allow_override, $config_entity->get('allow_override'));
   }
 
   /**
@@ -95,9 +95,9 @@ class RabbitHoleBehaviorSettingsEntityMethodsTest extends BrowserTestBase {
     $this->behaviorSettingExceptionThrown($entity,
       'setAllowOverride', ['some non-bool value'], __METHOD__);
     $entity->setAllowOverride(TRUE);
-    $this->assertEqual(TRUE, $entity->getAllowOverride());
+    $this->assertTrue($entity->getAllowOverride());
     $entity->setAllowOverride(FALSE);
-    $this->assertEqual(FALSE, $entity->getAllowOverride());
+    $this->assertFalse($entity->getAllowOverride());
   }
 
   /**
@@ -119,12 +119,10 @@ class RabbitHoleBehaviorSettingsEntityMethodsTest extends BrowserTestBase {
       [209458253], __METHOD__);
 
     $entity->setRedirectCode(BehaviorSettings::REDIRECT_FOUND);
-    $this->assertEqual(BehaviorSettings::REDIRECT_FOUND,
-      $entity->getRedirectCode());
+    $this->assertEquals(BehaviorSettings::REDIRECT_FOUND, $entity->getRedirectCode());
 
     $entity->setRedirectCode(BehaviorSettings::REDIRECT_MOVED_PERMANENTLY);
-    $this->assertEqual(BehaviorSettings::REDIRECT_MOVED_PERMANENTLY,
-      $entity->getRedirectCode());
+    $this->assertEquals(BehaviorSettings::REDIRECT_MOVED_PERMANENTLY, $entity->getRedirectCode());
   }
 
   /**
@@ -143,7 +141,7 @@ class RabbitHoleBehaviorSettingsEntityMethodsTest extends BrowserTestBase {
     $entity->setAction('redirect');
     $path = '/somepage';
     $entity->setRedirectPath($path);
-    $this->assertEqual($path, $entity->getRedirectPath());
+    $this->assertEquals($path, $entity->getRedirectPath());
   }
 
   /**

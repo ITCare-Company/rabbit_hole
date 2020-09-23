@@ -92,8 +92,8 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
 
     $saved_config = $this->behaviorSettingsManager->loadBehaviorSettingsAsConfig(
       'node_type', $test_content_type_id, TRUE);
-    $this->assertEqual($saved_config->get('action'), $action);
-    $this->assertEqual($saved_config->get('allow_override'), $override);
+    $this->assertEquals($action, $saved_config->get('action'));
+    $this->assertEquals($override, $saved_config->get('allow_override'));
   }
 
   /**
@@ -151,8 +151,8 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
     $saved_config = $this->behaviorSettingsManager->loadBehaviorSettingsAsConfig(
       'node_type', $test_content_type_id, TRUE);
 
-    $this->assertEqual($saved_config->get('action'), $action);
-    $this->assertEqual($saved_config->get('allow_override'), $override);
+    $this->assertEquals($action, $saved_config->get('action'));
+    $this->assertEquals($override, $saved_config->get('allow_override'));
   }
 
   /**
@@ -173,7 +173,7 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
     ], t('Save'));
 
     $node = Node::Load($node_id);
-    $this->assertEqual($node->rh_action->value, $action);
+    $this->assertEquals($action, $node->rh_action->value);
   }
 
   /**
@@ -191,7 +191,7 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
     ], t('Save'));
 
     $node = Node::Load($node_id);
-    $this->assertEqual($node->rh_action->value, $action);
+    $this->assertEquals($action, $node->rh_action->value);
   }
 
   /**
