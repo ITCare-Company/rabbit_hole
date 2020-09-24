@@ -47,7 +47,7 @@ class InvocationTest extends BrowserTestBase {
     $type = $this->createTestNodeType();
     $node = $this->createTestNodeOfType($type->id());
     $this->drupalGet(self::NODE_BASE_PATH . $node->id());
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -57,11 +57,11 @@ class InvocationTest extends BrowserTestBase {
     $type = $this->createTestNodeType('access_denied');
     $node = $this->createTestNodeOfType($type->id());
     $this->drupalGet(self::NODE_BASE_PATH . $node->id());
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
 
     $node2 = $this->createTestNodeOfType($type->id(), 'bundle_default');
     $this->drupalGet(self::NODE_BASE_PATH . $node2->id());
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
   }
 
   /**
@@ -71,7 +71,7 @@ class InvocationTest extends BrowserTestBase {
     $type = $this->createTestNodeType();
     $node = $this->createTestNodeOfType($type->id(), 'access_denied');
     $this->drupalGet(self::NODE_BASE_PATH . $node->id());
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
   }
 
   /**
@@ -81,7 +81,7 @@ class InvocationTest extends BrowserTestBase {
     $type = $this->createTestNodeType('access_denied');
     $node = $this->createTestNodeOfType($type->id(), 'display_page');
     $this->drupalGet(self::NODE_BASE_PATH . $node->id());
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -112,7 +112,7 @@ class InvocationTest extends BrowserTestBase {
     $type = $this->createTestNodeType();
     $node = $this->createTestNodeOfType($type->id(), 'page_not_found');
     $this->drupalGet(self::NODE_BASE_PATH . $node->id());
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
   }
 
   /**
@@ -165,7 +165,7 @@ class InvocationTest extends BrowserTestBase {
     $node->set('rh_redirect_response', $redirect_code);
     $node->save();
     $this->drupalGet(self::NODE_BASE_PATH . $node->id());
-    $this->assertUrl($base_root . $destination_path);
+    $this->assertSession()->addressEquals($base_root . $destination_path);
   }
 
 }

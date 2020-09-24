@@ -62,14 +62,16 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
     $this->createTestContentType();
     $this->loadContentTypeFormForTestType();
 
-    $this->assertFieldByName('rh_override', BehaviorSettings::OVERRIDE_ALLOW);
-    $this->assertFieldByName('rh_action', 'access_denied');
-    $this->assertFieldByName('rh_action', 'display_page');
-    $this->assertFieldByName('rh_action', 'page_not_found');
-    $this->assertFieldByName('rh_action', 'page_redirect');
+    $this->assertSession()->fieldValueEquals('rh_override', BehaviorSettings::OVERRIDE_ALLOW);
+
+    $this->assertSession()->fieldExists('rh_action');
+    $this->assertSession()->fieldExists('edit-rh-action-access-denied');
+    $this->assertSession()->fieldExists('edit-rh-action-display-page');
+    $this->assertSession()->fieldExists('edit-rh-action-page-not-found');
+    $this->assertSession()->fieldExists('edit-rh-action-page-redirect');
     $default_option_id = 'edit-rh-action-'
       . str_replace('_', '-', self::DEFAULT_BUNDLE_ACTION);
-    $this->assertFieldChecked($default_option_id);
+    $this->assertSession()->checkboxChecked($default_option_id);
   }
 
   /**
@@ -116,10 +118,10 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
 
     $this->loadContentTypeFormForTestType();
 
-    $this->assertFieldByName('rh_override', $override);
+    $this->assertSession()->fieldValueEquals('rh_override', $override);
     $default_option_id = 'edit-rh-action-'
       . str_replace('_', '-', $action);
-    $this->assertFieldChecked($default_option_id);
+    $this->assertSession()->checkboxChecked($default_option_id);
   }
 
   /**
@@ -201,14 +203,14 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
     $this->createTestContentType();
     $this->loadNewNodeFormForTestContentType();
 
-    $this->assertNoFieldByName('rh_override');
-    $this->assertFieldByName('rh_action', 'access_denied');
-    $this->assertFieldByName('rh_action', 'display_page');
-    $this->assertFieldByName('rh_action', 'page_not_found');
-    $this->assertFieldByName('rh_action', 'page_redirect');
+    $this->assertSession()->fieldExists('rh_action');
+    $this->assertSession()->fieldExists('edit-rh-action-access-denied');
+    $this->assertSession()->fieldExists('edit-rh-action-display-page');
+    $this->assertSession()->fieldExists('edit-rh-action-page-not-found');
+    $this->assertSession()->fieldExists('edit-rh-action-page-redirect');
     $default_option_id = 'edit-rh-action-'
       . str_replace('_', '-', self::DEFAULT_ACTION);
-    $this->assertFieldChecked($default_option_id);
+    $this->assertSession()->checkboxChecked($default_option_id);
   }
 
   /**
@@ -222,7 +224,7 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
     $this->loadNodeFormForTestNode($node_id);
     $default_option_id = 'edit-rh-action-'
       . str_replace('_', '-', $action);
-    $this->assertFieldChecked($default_option_id);
+    $this->assertSession()->checkboxChecked($default_option_id);
   }
 
   /**
@@ -270,7 +272,7 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
     $this->drupalLogin($this->user);
     $this->drupalGet(self::CONTENT_TYPE_PATH_PREFIX
       . self::TEST_CONTENT_TYPE_ID);
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -280,7 +282,7 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
     $this->drupalLogin($this->user);
     $this->drupalGet(self::CONTENT_ADD_PREFIX
       . self::TEST_CONTENT_TYPE_ID);
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -292,7 +294,7 @@ class BehaviorSettingsFormAlterationsTest extends BrowserTestBase {
   private function loadNodeFormForTestNode($test_node_id) {
     $this->drupalLogin($this->user);
     $this->drupalGet('node/' . $test_node_id . '/edit');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
 }
