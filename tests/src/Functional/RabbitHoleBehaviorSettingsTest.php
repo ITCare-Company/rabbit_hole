@@ -132,7 +132,7 @@ class RabbitHoleBehaviorSettingsTest extends BrowserTestBase {
     ], $entity_type_label, $entity_id);
     $action = $this->behaviorSettingsManager->loadBehaviorSettingsAsConfig(
       $entity_type_label, $entity_id)->get('action');
-    $this->assertEqual($action, $expected_action, 'Unexpected action '
+    $this->assertEquals($expected_action, $action, 'Unexpected action '
       . ' (called from ' . $calling_method . ')');
 
     // Clean up the entity afterwards.

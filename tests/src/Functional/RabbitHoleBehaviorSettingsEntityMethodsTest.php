@@ -181,7 +181,7 @@ class RabbitHoleBehaviorSettingsEntityMethodsTest extends BrowserTestBase {
     catch (InvalidBehaviorSettingException $ex) {
       $exception_was_thrown = TRUE;
     }
-    $this->assert($exception_was_thrown, 'Exception thrown executing '
+    $this->assertTrue($exception_was_thrown, 'Exception thrown executing '
       . $method . ', called from ' . $parent);
   }
 
