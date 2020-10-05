@@ -45,7 +45,7 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
 
     // TODO: These tests should be expanded for users with different types of
     // permissions.
-    $this->user = $this->drupalCreateUser([
+    $this->adminUser = $this->drupalCreateUser([
       'bypass node access', 'administer content types',
       'rabbit hole administer node',
     ]);

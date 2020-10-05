@@ -23,7 +23,12 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    */
   public static $modules = ['rabbit_hole'];
 
-  protected $user;
+  /**
+   * Admin user.
+   *
+   * @var \Drupal\user\UserInterface
+   */
+  protected $adminUser;
 
   /**
    * The name of bundle entity type.
@@ -52,8 +57,8 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    * Test that bundle form contains Rabbit Hole settings and required fields.
    */
   public function testDefaultBundleForm() {
-    $bundle = $this->createEntityBundle();
-    $this->loadEntityBundleForm($bundle);
+    $bundle_id = $this->createEntityBundle();
+    $this->loadEntityBundleForm($bundle_id);
 
     $this->assertSession()->fieldValueEquals('rh_override', BehaviorSettings::OVERRIDE_ALLOW);
     $this->assertSession()->pageTextContains('Rabbit Hole settings');
@@ -141,15 +146,15 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    */
   public function testExistingEntityNoConfigSave() {
     $this->createEntityBundle();
-    $node_id = $this->createEntity();
-    $this->loadEditEntityForm($node_id);
+    $entity_id = $this->createEntity();
+    $this->loadEditEntityForm($entity_id);
     $action = 'access_denied';
 
     $this->drupalPostForm(NULL, [
       'rh_action' => $action,
     ], 'Save');
 
-    $entity = $this->loadEntity($node_id);
+    $entity = $this->loadEntity($entity_id);
     $this->assertEquals($action, $entity->get('rh_action')->value);
   }
 
@@ -158,15 +163,15 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    */
   public function testExistingEntitySave() {
     $this->createEntityBundle();
-    $node_id = $this->createEntity('display_page');
-    $this->loadEditEntityForm($node_id);
+    $entity_id = $this->createEntity('display_page');
+    $this->loadEditEntityForm($entity_id);
     $action = 'access_denied';
 
     $this->drupalPostForm(NULL, [
       'rh_action' => $action,
     ], 'Save');
 
-    $entity = $this->loadEntity($node_id);
+    $entity = $this->loadEntity($entity_id);
     $this->assertEquals($action, $entity->get('rh_action')->value);
   }
 
@@ -192,8 +197,8 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $this->createEntityBundle();
 
     $action = 'access_denied';
-    $node_id = $this->createEntity($action);
-    $this->loadEditEntityForm($node_id);
+    $entity_id = $this->createEntity($action);
+    $this->loadEditEntityForm($entity_id);
 
     $this->assertSession()->checkboxChecked($this->getOptionId($action));
   }
@@ -202,7 +207,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    * Loads the bundle configuration form.
    */
   protected function loadEntityBundleForm($bundle) {
-    $this->drupalLogin($this->user);
+    $this->drupalLogin($this->adminUser);
     $this->drupalGet($this->getEditBundleUrl($bundle));
     $this->assertSession()->statusCodeEquals(200);
   }
@@ -211,7 +216,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    * Loads the "Create" entity form.
    */
   protected function loadCreateEntityForm() {
-    $this->drupalLogin($this->user);
+    $this->drupalLogin($this->adminUser);
     $this->drupalGet($this->getCreateEntityUrl());
     $this->assertSession()->statusCodeEquals(200);
   }
@@ -220,7 +225,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    * Loads the "Edit" entity form.
    */
   protected function loadEditEntityForm($entity_id) {
-    $this->drupalLogin($this->user);
+    $this->drupalLogin($this->adminUser);
     $this->drupalGet($this->getEditEntityUrl($entity_id));
     $this->assertSession()->statusCodeEquals(200);
   }

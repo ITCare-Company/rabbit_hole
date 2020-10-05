@@ -39,7 +39,7 @@ class TaxonomyBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTes
   protected function setUp() {
     parent::setUp();
 
-    $this->user = $this->drupalCreateUser([
+    $this->adminUser = $this->drupalCreateUser([
       'administer taxonomy',
       'access taxonomy overview',
       'rabbit hole administer taxonomy_term',
