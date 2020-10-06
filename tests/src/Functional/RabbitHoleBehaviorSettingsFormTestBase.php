@@ -77,7 +77,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $override = BehaviorSettings::OVERRIDE_DISALLOW;
     $action = 'access_denied';
 
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'rh_override' => $override,
       'rh_action' => $action,
     ], 'edit-submit');
@@ -127,10 +127,10 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $action = 'page_not_found';
     $override = BehaviorSettings::OVERRIDE_ALLOW;
 
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'rh_override' => $override,
       'rh_action' => $action,
-    ],'edit-submit');
+    ], 'edit-submit');
 
     $saved_config = $this->behaviorSettingsManager->loadBehaviorSettingsAsConfig($this->bundleEntityTypeName, $test_bundle_id);
 
@@ -150,7 +150,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $this->loadEditEntityForm($entity_id);
     $action = 'access_denied';
 
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'rh_action' => $action,
     ], 'Save');
 
@@ -167,7 +167,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $this->loadEditEntityForm($entity_id);
     $action = 'access_denied';
 
-    $this->drupalPostForm(NULL, [
+    $this->submitForm([
       'rh_action' => $action,
     ], 'Save');
 
