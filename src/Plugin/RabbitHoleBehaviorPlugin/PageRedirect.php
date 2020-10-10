@@ -148,18 +148,14 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED;
     }
 
-    if ($this->moduleHandler->moduleExists('token')) {
-      $target = $this->token->replace($target,
-        [
-          $entity->getEntityTypeId() => $entity,
-        ],
-        [
-          'clear' => TRUE,
-          'langcode' => $langcode,
-        ], new BubbleableMetadata()
-      );
-      $target = PlainTextOutput::renderFromHtml($target);
-    }
+    $target = $this->token->replace($target, [
+      $entity->getEntityTypeId() => $entity,
+    ], [
+        'clear' => TRUE,
+        'langcode' => $langcode,
+      ], new BubbleableMetadata()
+    );
+    $target = PlainTextOutput::renderFromHtml($target);
 
     if ($target === '<front>' || $target === '/<front>') {
       // Special case for redirecting to the front page.
