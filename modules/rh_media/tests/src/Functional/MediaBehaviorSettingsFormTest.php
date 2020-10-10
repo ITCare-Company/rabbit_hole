@@ -4,6 +4,7 @@ namespace Drupal\Tests\rh_media\Functional;
 
 use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
+use Drupal\media\Entity\MediaType;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\Tests\rabbit_hole\Functional\RabbitHoleBehaviorSettingsFormTestBase;
 
@@ -59,6 +60,27 @@ class MediaBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
       'id' => mb_strtolower($this->randomMachineName()),
     ]);
     return $this->bundle->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function createEntityBundleFormSubmit($action, $override) {
+    $this->drupalLogin($this->adminUser);
+    $this->drupalGet('/admin/structure/media/add');
+
+    $this->assertRabbitHoleSettings();
+    $machine_name = mb_strtolower($this->randomMachineName());
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->fieldExists('label')->setValue($this->randomString());
+    $this->assertSession()->fieldExists('id')->setValue($machine_name);
+    $this->assertSession()->selectExists('source')->selectOption('test');
+    $this->assertSession()->fieldExists('rh_action')->setValue($action);
+    $this->assertSession()->fieldExists('rh_override')->setValue($override);
+    $this->assertSession()->buttonExists('Save')->press();
+    // To actually save the bundle we need to hit save again.
+    $this->assertSession()->buttonExists('Save')->press();
+    return $machine_name;
   }
 
   /**

@@ -57,6 +57,23 @@ class TaxonomyBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTes
   /**
    * {@inheritdoc}
    */
+  protected function createEntityBundleFormSubmit($action, $override) {
+    $this->drupalLogin($this->adminUser);
+    $edit = [
+      'name' => $this->randomString(),
+      'vid' => mb_strtolower($this->randomMachineName()),
+      'rh_action' => $action,
+      'rh_override' => $override,
+    ];
+    $this->drupalGet('/admin/structure/taxonomy/add');
+    $this->assertRabbitHoleSettings();
+    $this->submitForm($edit, 'Save');
+    return $edit['vid'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function createEntity($action = NULL) {
     $values = [];
     if (isset($action)) {

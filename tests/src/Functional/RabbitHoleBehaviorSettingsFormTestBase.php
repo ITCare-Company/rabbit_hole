@@ -60,16 +60,31 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $bundle_id = $this->createEntityBundle();
     $this->loadEntityBundleForm($bundle_id);
 
+    $this->assertRabbitHoleSettings();
     $this->assertSession()->fieldValueEquals('rh_override', BehaviorSettings::OVERRIDE_ALLOW);
-    $this->assertSession()->pageTextContains('Rabbit Hole settings');
-    $this->assertSession()->fieldExists('rh_action');
-    $this->assertSession()->fieldExists('edit-rh-action-access-denied');
-    $this->assertSession()->fieldExists('edit-rh-action-display-page');
-    $this->assertSession()->fieldExists('edit-rh-action-page-not-found');
-    $this->assertSession()->fieldExists('edit-rh-action-page-redirect');
     $this->assertSession()->checkboxChecked($this->getOptionId(static::DEFAULT_BUNDLE_ACTION));
   }
 
+  /**
+   * Test that Rabbit Hole settings are created together with entity bundle.
+   */
+  public function testBundleCreation() {
+    $override = BehaviorSettings::OVERRIDE_DISALLOW;
+    $action = 'access_denied';
+    $bundle_id = $this->createEntityBundleFormSubmit($action, $override);
+
+    $saved_config = $this->behaviorSettingsManager->loadBehaviorSettingsAsConfig($this->bundleEntityTypeName, $bundle_id);
+    $this->assertEquals($action, $saved_config->get('action'));
+    $this->assertEquals($override, $saved_config->get('allow_override'));
+
+    $this->loadEntityBundleForm($bundle_id);
+    $this->assertSession()->fieldValueEquals('rh_override', $override);
+    $this->assertSession()->checkboxChecked($this->getOptionId($action));
+  }
+
+  /**
+   * Test the first bundle form save with Rabbit Hole configuration.
+   */
   public function testBundleFormFirstSave() {
     $test_bundle_id = $this->createEntityBundle();
     $this->loadEntityBundleForm($test_bundle_id);
@@ -182,11 +197,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $this->createEntityBundle();
     $this->loadCreateEntityForm();
 
-    $this->assertSession()->fieldExists('rh_action');
-    $this->assertSession()->fieldExists('edit-rh-action-access-denied');
-    $this->assertSession()->fieldExists('edit-rh-action-display-page');
-    $this->assertSession()->fieldExists('edit-rh-action-page-not-found');
-    $this->assertSession()->fieldExists('edit-rh-action-page-redirect');
+    $this->assertRabbitHoleSettings();
     $this->assertSession()->checkboxChecked($this->getOptionId(static::DEFAULT_ACTION));
   }
 
@@ -201,6 +212,17 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $this->loadEditEntityForm($entity_id);
 
     $this->assertSession()->checkboxChecked($this->getOptionId($action));
+  }
+
+  /**
+   * Combines multiple asserts to check the "Rabbit Hole" settings fieldset.
+   */
+  protected function assertRabbitHoleSettings() {
+    $this->assertSession()->fieldExists('rh_action');
+    $this->assertSession()->fieldExists('edit-rh-action-access-denied');
+    $this->assertSession()->fieldExists('edit-rh-action-display-page');
+    $this->assertSession()->fieldExists('edit-rh-action-page-not-found');
+    $this->assertSession()->fieldExists('edit-rh-action-page-redirect');
   }
 
   /**
@@ -269,6 +291,11 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    *   ID of the created bundle.
    */
   abstract protected function createEntityBundle();
+
+  /**
+   * Creates new entity bundle via form submit.
+   */
+  abstract protected function createEntityBundleFormSubmit($action, $override);
 
   /**
    * Creates new entity.

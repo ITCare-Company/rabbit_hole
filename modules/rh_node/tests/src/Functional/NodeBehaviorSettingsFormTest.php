@@ -52,6 +52,14 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
   }
 
   /**
+   * Test that Rabbit Hole settings are created with "Field UI" enabled.
+   */
+  public function testBundleCreationWithFieldUi() {
+    \Drupal::service('module_installer')->install(['field_ui']);
+    $this->testBundleCreation();
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function createEntityBundle() {
@@ -59,6 +67,24 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
       'type' => self::TEST_BUNDLE,
     ]);
     return $this->bundle->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function createEntityBundleFormSubmit($action, $override) {
+    $this->drupalLogin($this->adminUser);
+    $edit = [
+      'name' => $this->randomString(),
+      'type' => mb_strtolower($this->randomMachineName()),
+      'rh_action' => $action,
+      'rh_override' => $override,
+    ];
+    $this->drupalGet(Url::fromRoute('node.type_add'));
+    $this->assertRabbitHoleSettings();
+    $button_label = \Drupal::moduleHandler()->moduleExists('field_ui') ? 'Save and manage fields' : 'Save content type';
+    $this->submitForm($edit, $button_label);
+    return $edit['type'];
   }
 
   /**

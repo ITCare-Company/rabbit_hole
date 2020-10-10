@@ -18,10 +18,11 @@ class Node extends RabbitHoleEntityPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormSubmitHandlerAttachLocations() {
-    return [
-      ['actions', 'submit', '#submit'],
-    ];
+  public function getBundleFormSubmitHandlerAttachLocations() {
+    if (\Drupal::moduleHandler()->moduleExists('field_ui')) {
+      return [['actions', 'save_continue', '#submit']];
+    }
+    return parent::getBundleFormSubmitHandlerAttachLocations();
   }
 
 }
