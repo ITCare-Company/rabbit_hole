@@ -298,11 +298,8 @@ class FormManglerService {
           '/',
           '?',
           '#',
+          '[',
         ];
-
-        if (\Drupal::service('module_handler')->moduleExists('token')) {
-          $accepted_internal_characters[] = '[';
-        }
 
         if (!in_array(substr($redirect, 0, 1), $accepted_internal_characters)) {
           $form_state->setErrorByName('rh_redirect', t("Internal path '@string' must begin with a '/', '?', '#', or be a token.", ['@string' => $redirect]));

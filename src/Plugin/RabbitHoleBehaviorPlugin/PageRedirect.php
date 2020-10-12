@@ -257,14 +257,11 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     // Build the descriptive text.
     $description = [];
     $description[] = t('Enter the relative path or the full URL that the user should get redirected to. Query strings and fragments are supported, such as %example.', ['%example' => 'http://www.example.com/?query=value#fragment']);
-
-    if ($this->moduleHandler->moduleExists('token')) {
-      $description[] = t(
-        'You may enter tokens in this field, such as %example1 or %example2.', [
-          '%example1' => '[node:field_link]',
-          '%example2' => '/my/view?page=[node:field_page_number]',
-      ]);
-    }
+    $description[] = t(
+      'You may enter tokens in this field, such as %example1 or %example2.', [
+        '%example1' => '[node:field_link]',
+        '%example2' => '/my/view?page=[node:field_page_number]',
+    ]);
 
     $form['rabbit_hole']['redirect']['rh_redirect'] = [
       '#type' => 'textfield',
