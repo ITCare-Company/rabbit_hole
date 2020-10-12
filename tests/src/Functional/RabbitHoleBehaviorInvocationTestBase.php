@@ -92,39 +92,20 @@ abstract class RabbitHoleBehaviorInvocationTestBase extends BrowserTestBase {
   /**
    * Test that entity set to page_redirect actually redirects.
    */
-  public function testUrlRedirects() {
-    $this->createEntityBundle('access_denied');
-
-    $this->assertUrlRedirect(301);
-    $this->assertUrlRedirect(302);
-    $this->assertUrlRedirect(303);
-    // $this->assertUrlRedirect(304);.
-    $this->assertUrlRedirect(305);
-    $this->assertUrlRedirect(307);
-  }
-
-  /**
-   * Test some simple URL redirects.
-   */
-  protected function assertUrlRedirect($redirect_code) {
-    $target_entity = $this->createEntity( 'display_page');
-    $destination_path = $target_entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+  public function testPageRedirect() {
+    $this->createEntityBundle();
+    $destination_path = $this->createEntity( 'display_page')
+      ->toUrl('canonical', ['absolute' => TRUE])
+      ->toString();
 
     $entity = $this->createEntity('page_redirect');
     $entity->set('rh_redirect', $destination_path);
-    $entity->set('rh_redirect_response', $redirect_code);
+    $entity->set('rh_redirect_response', 301);
     $entity->save();
 
     $this->drupalGet($entity->toUrl()->toString());
     $this->assertSession()->addressEquals($destination_path);
   }
-
-  /**
-   * Test URL redirects with tokens.
-   *
-   * @todo
-   */
-  public function testTokenizedUrlRedirect() {}
 
   /**
    * Creates new entity bundle.
