@@ -4,7 +4,6 @@ namespace Drupal\Tests\rh_media\Functional;
 
 use Drupal\Core\Url;
 use Drupal\media\Entity\Media;
-use Drupal\media\Entity\MediaType;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
 use Drupal\Tests\rabbit_hole\Functional\RabbitHoleBehaviorSettingsFormTestBase;
 
@@ -27,28 +26,17 @@ class MediaBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
   /**
    * {@inheritdoc}
    */
+  protected $entityType = 'media';
+
+  /**
+   * {@inheritdoc}
+   */
   protected $bundleEntityTypeName = 'media_type';
 
   /**
    * {@inheritdoc}
    */
   public static $modules = ['rh_media', 'media', 'media_test_source'];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-
-    $this->adminUser = $this->drupalCreateUser([
-      'access media overview',
-      'administer media',
-      'administer media types',
-      'view media',
-      'rabbit hole administer media',
-      'rabbit hole bypass media',
-    ]);
-  }
 
   /**
    * {@inheritdoc}
@@ -128,6 +116,13 @@ class MediaBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
    */
   protected function getEditBundleUrl($bundle) {
     return Url::fromRoute('entity.media_type.edit_form', ['media_type' => $bundle]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getAdminPermissions() {
+    return ['access media overview', 'administer media', 'administer media types', 'view media', 'rabbit hole bypass media'];
   }
 
 }

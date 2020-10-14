@@ -28,6 +28,11 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
   /**
    * {@inheritdoc}
    */
+  protected $entityType = 'node';
+
+  /**
+   * {@inheritdoc}
+   */
   protected $bundleEntityTypeName = 'node_type';
 
   const TEST_BUNDLE = 'rh_node_test_content_type';
@@ -36,20 +41,6 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
    * {@inheritdoc}
    */
   public static $modules = ['rh_node', 'node'];
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-
-    // TODO: These tests should be expanded for users with different types of
-    // permissions.
-    $this->adminUser = $this->drupalCreateUser([
-      'bypass node access', 'administer content types',
-      'rabbit hole administer node',
-    ]);
-  }
 
   /**
    * Test that Rabbit Hole settings are created with "Field UI" enabled.
@@ -136,6 +127,13 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
    */
   protected function getEditBundleUrl($bundle) {
     return Url::fromRoute('entity.node_type.edit_form', ['node_type' => $bundle]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getAdminPermissions() {
+    return ['bypass node access', 'administer content types'];
   }
 
 }

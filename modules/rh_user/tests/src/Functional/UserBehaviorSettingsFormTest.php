@@ -16,6 +16,11 @@ class UserBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
   /**
    * {@inheritdoc}
    */
+  protected $entityType = 'user';
+
+  /**
+   * {@inheritdoc}
+   */
   protected $bundleEntityTypeName = 'user';
 
   /**
@@ -39,20 +44,6 @@ class UserBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
 
   const DEFAULT_BUNDLE_ACTION = 'display_page';
   const DEFAULT_ACTION = 'bundle_default';
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-
-    $this->behaviorSettingsManager = $this->container->get('rabbit_hole.behavior_settings_manager');
-    $this->adminUser = $this->drupalCreateUser([
-      'administer account settings',
-      'administer users',
-      'rabbit hole administer user',
-    ]);
-  }
 
   /**
    * Nothing to test here, user entity/bundle already exists.
@@ -111,6 +102,13 @@ class UserBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
    */
   protected function getEditBundleUrl($bundle) {
     return Url::fromRoute('entity.user.admin_form');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getAdminPermissions() {
+    return ['administer account settings', 'administer users'];
   }
 
 }

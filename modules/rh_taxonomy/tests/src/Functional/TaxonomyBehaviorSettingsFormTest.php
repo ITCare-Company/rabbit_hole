@@ -26,6 +26,11 @@ class TaxonomyBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTes
   /**
    * {@inheritdoc}
    */
+  protected $entityType = 'taxonomy_term';
+
+  /**
+   * {@inheritdoc}
+   */
   protected $bundleEntityTypeName = 'taxonomy_vocabulary';
 
   /**
@@ -38,12 +43,6 @@ class TaxonomyBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTes
    */
   protected function setUp() {
     parent::setUp();
-
-    $this->adminUser = $this->drupalCreateUser([
-      'administer taxonomy',
-      'access taxonomy overview',
-      'rabbit hole administer taxonomy_term',
-    ]);
   }
 
   /**
@@ -108,6 +107,13 @@ class TaxonomyBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTes
    */
   protected function getEditBundleUrl($bundle) {
     return Url::fromRoute('entity.taxonomy_vocabulary.edit_form', ['taxonomy_vocabulary' => $bundle]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getAdminPermissions() {
+    return ['administer taxonomy', 'access taxonomy overview'];
   }
 
 }

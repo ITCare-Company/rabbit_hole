@@ -51,6 +51,8 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     parent::setUp();
 
     $this->behaviorSettingsManager = $this->container->get('rabbit_hole.behavior_settings_manager');
+    $admin_permissions = array_merge($this->getAdminPermissions(), ['rabbit hole administer ' . $this->entityType]);
+    $this->adminUser = $this->drupalCreateUser($admin_permissions);
   }
 
   /**
@@ -63,6 +65,20 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
     $this->assertRabbitHoleSettings();
     $this->assertSession()->fieldValueEquals('rh_override', BehaviorSettings::OVERRIDE_ALLOW);
     $this->assertSession()->checkboxChecked($this->getOptionId(static::DEFAULT_BUNDLE_ACTION));
+  }
+
+  /**
+   * Test the "rabbit hole administer *" permission.
+   *
+   * User without "rabbit hole administer *" permission should not be able to
+   * see and administer Rabbit Hole settings.
+   */
+  public function testAdministerPermission() {
+    $this->drupalLogin($this->drupalCreateUser($this->getAdminPermissions()));
+
+    $this->createEntityBundle();
+    $this->drupalGet($this->getCreateEntityUrl());
+    $this->assertNoRabbitHoleSettings();
   }
 
   /**
@@ -226,6 +242,17 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   }
 
   /**
+   * Combines multiple asserts to check that "Rabbit Hole" settings are hidden.
+   */
+  protected function assertNoRabbitHoleSettings() {
+    $this->assertSession()->fieldNotExists('rh_action');
+    $this->assertSession()->fieldNotExists('edit-rh-action-access-denied');
+    $this->assertSession()->fieldNotExists('edit-rh-action-display-page');
+    $this->assertSession()->fieldNotExists('edit-rh-action-page-not-found');
+    $this->assertSession()->fieldNotExists('edit-rh-action-page-redirect');
+  }
+
+  /**
    * Loads the bundle configuration form.
    */
   protected function loadEntityBundleForm($bundle) {
@@ -318,5 +345,13 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    *   Loaded entity.
    */
   abstract protected function loadEntity($id);
+
+  /**
+   * Returns a list of admin permissions for current entity type.
+   *
+   * @return array
+   *   A list of admin permissions.
+   */
+  abstract protected function getAdminPermissions();
 
 }
