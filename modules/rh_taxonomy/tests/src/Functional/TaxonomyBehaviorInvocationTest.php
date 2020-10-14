@@ -17,6 +17,11 @@ class TaxonomyBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBas
   /**
    * {@inheritdoc}
    */
+  protected $entityType = 'taxonomy_term';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['rh_taxonomy', 'taxonomy'];
 
   /**

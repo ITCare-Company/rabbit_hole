@@ -14,6 +14,11 @@ class UserBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
   /**
    * {@inheritdoc}
    */
+  protected $entityType = 'user';
+
+  /**
+   * {@inheritdoc}
+   */
   public static $modules = ['rh_user', 'user'];
 
   /**
@@ -21,10 +26,6 @@ class UserBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
    */
   protected function setUp() {
     parent::setUp();
-
-    $this->drupalLogin($this->drupalCreateUser([
-      'access user profiles',
-    ]));
   }
 
   /**
@@ -47,6 +48,13 @@ class UserBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
       $values['rh_action'] = $action;
     }
     return $this->drupalCreateUser([], $this->randomMachineName(), FALSE, $values);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getViewPermissions() {
+    return ['access user profiles'];
   }
 
 }

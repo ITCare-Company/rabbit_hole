@@ -32,6 +32,7 @@ abstract class RabbitHoleBehaviorInvocationTestBase extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
     $this->behaviorSettingsManager = $this->container->get('rabbit_hole.behavior_settings_manager');
+    $this->drupalLogin($this->drupalCreateUser($this->getViewPermissions()));
   }
 
   /**
@@ -108,6 +109,19 @@ abstract class RabbitHoleBehaviorInvocationTestBase extends BrowserTestBase {
   }
 
   /**
+   * Test "rabbit hole bypass *" permissions.
+   */
+  public function testRabbitHoleBypassPermissions() {
+    $this->drupalLogin($this->createUser(array_merge($this->getViewPermissions(), ['rabbit hole bypass ' . $this->entityType])));
+    $this->createEntityBundle();
+    $entity = $this->createEntity('page_not_found');
+    $this->drupalGet($entity->toUrl()->toString());
+
+    // Users with bypass permission should have access to entity pages.
+    $this->assertSession()->statusCodeEquals(200);
+  }
+
+  /**
    * Creates new entity bundle.
    *
    * @param string $action
@@ -128,5 +142,15 @@ abstract class RabbitHoleBehaviorInvocationTestBase extends BrowserTestBase {
    *   Created entity.
    */
   abstract protected function createEntity($action = NULL);
+
+  /**
+   * A list of permissions required to access the entity page.
+   *
+   * @return array
+   *   A list of permissions.
+   */
+  protected function getViewPermissions() {
+    return [];
+  }
 
 }
