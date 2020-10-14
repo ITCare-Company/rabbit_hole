@@ -3,15 +3,25 @@
 namespace Drupal\Tests\rabbit_hole\Functional;
 
 use Drupal\Core\Url;
-use Drupal\node\Entity\NodeType;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
+use Drupal\node\Entity\Node;
 use Drupal\Tests\BrowserTestBase;
 
 /**
  * Test the "Page redirect" action.
  *
+ * @requires module token
  * @group rabbit_hole
  */
 class RabbitHolePageRedirectActionTest extends BrowserTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $profile = 'standard';
 
   /**
    * {@inheritdoc}
@@ -21,7 +31,7 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rh_node', 'user'];
+  public static $modules = ['rh_node', 'user', 'media', 'token'];
 
   /**
    * The behavior settings manager.
@@ -36,6 +46,7 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
     $this->behaviorSettingsManager = $this->container->get('rabbit_hole.behavior_settings_manager');
+    $this->behaviorSettingsManager->saveBehaviorSettings(['action' => 'display_page', 'allow_override' => TRUE], 'node_type', 'article');
   }
 
   /**
@@ -55,6 +66,7 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
    * Test URL redirect with token value.
    */
   public function testTokenizedUrlRedirect() {
+    // Test redirect with default system token.
     $node = $this->createTestNode('page_redirect');
     $node->set('rh_redirect', '[site:url]');
     $node->set('rh_redirect_response', 301);
@@ -64,6 +76,67 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
     $this->assertSession()->statusCodeEquals(200);
     $expected_url = Url::fromRoute('<front>');
     $this->assertSession()->addressEquals($expected_url);
+
+    // Test more complex scenarios with nested entities.
+    // Attach media field to Article content type.
+    $storage = FieldStorageConfig::create([
+      'entity_type' => 'node',
+      'field_name' => 'field_related_media',
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'media',
+      ],
+    ]);
+    $storage->save();
+    FieldConfig::create([
+      'field_storage' => $storage,
+      'entity_type' => 'node',
+      'bundle' => 'article',
+      'label' => 'Related media',
+      'settings' => [
+        'handler_settings' => [
+          'target_bundles' => [
+            'document' => 'document',
+          ],
+        ],
+      ],
+    ])->save();
+
+    $file = $this->createTestFile('first');
+
+    $media = Media::create([
+      'bundle' => 'document',
+      'name' => $this->randomString(),
+      'field_media_document' => $file->id(),
+    ]);
+    $media->save();
+
+    $node = Node::create([
+      'title' => $this->randomString(),
+      'type' => 'article',
+      'field_related_media' => [
+        'target_id' => $media->id(),
+      ],
+      'rh_action' => 'page_redirect',
+      'rh_redirect' => '[node:field_related_media:entity:field_media_document:entity:url]',
+      'rh_redirect_response' => 301,
+    ]);
+    $node->save();
+
+    $this->drupalGet($node->toUrl());
+    $expected_url = file_create_url($file->getFileUri());
+    $this->assertSession()->addressEquals($expected_url);
+    $this->assertSession()->responseContains('first');
+
+    // Change the file in media entity and verify that destination changed.
+    $file2 = $this->createTestFile('second file');
+    $media->set('field_media_document', $file2->id());
+    $media->save();
+
+    $this->drupalGet($node->toUrl());
+    $expected_url = file_create_url($file2->getFileUri());
+    $this->assertSession()->addressEquals($expected_url);
+    $this->assertSession()->responseContains('second');
   }
 
   /**
@@ -89,24 +162,34 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
    *   Test node object.
    */
   protected function createTestNode($action = NULL) {
-    $content_type = NodeType::load('test_bundle');
-
-    if (empty($content_type)) {
-      $content_type = $this->drupalCreateContentType([
-        'type' => 'test_bundle',
-      ]);
-      if (isset($action)) {
-        $this->behaviorSettingsManager->saveBehaviorSettings(['action' => $action, 'allow_override' => TRUE], 'node_type', $content_type->id());
-      }
-    }
-
     $values = [
-      'type' => $content_type->id(),
+      'type' => 'article',
     ];
     if (isset($action)) {
       $values['rh_action'] = $action;
     }
     return $this->drupalCreateNode($values);
+  }
+
+  /**
+   * Creates test file.
+   *
+   * @return \Drupal\file\FileInterface
+   *   Test file object.
+   */
+  protected function createTestFile($filename) {
+    /** @var \Drupal\file\FileInterface $file */
+    $file = File::create([
+      'uid' => 1,
+      'filename' => "{$filename}.txt",
+      'uri' => "public://{$filename}.txt",
+      'filemime' => 'text/plain',
+      'status' => FILE_STATUS_PERMANENT,
+    ]);
+    file_put_contents($file->getFileUri(), $filename);
+    $file->save();
+
+    return $file;
   }
 
 }

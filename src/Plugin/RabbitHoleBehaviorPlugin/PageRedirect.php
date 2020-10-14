@@ -124,6 +124,9 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
    * {@inheritdoc}
    */
   public function performAction(EntityInterface $entity, Response $current_response = NULL) {
+    // BubbleableMetadata object to collect redirect cacheability metadata.
+    $bubbleable_metadata = new BubbleableMetadata();
+
     $target = $entity->get('rh_redirect')->value;
     $response_code = NULL;
 
@@ -136,6 +139,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     if (empty($target)) {
       $target = $bundle_settings->get('redirect');
       $response_code = $bundle_settings->get('redirect_code');
+      $bubbleable_metadata->addCacheableDependency($bundle_settings);
     }
     else {
       $response_code = $entity->get('rh_redirect_response')->value;
@@ -153,7 +157,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     ], [
         'clear' => TRUE,
         'langcode' => $langcode,
-      ], new BubbleableMetadata()
+      ], $bubbleable_metadata
     );
     $target = PlainTextOutput::renderFromHtml($target);
 
@@ -174,7 +178,9 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       case self::REDIRECT_SEE_OTHER:
       case self::REDIRECT_TEMPORARY_REDIRECT:
         if ($current_response === NULL) {
-          return new TrustedRedirectResponse($target, $response_code);
+          $redirect_response = new TrustedRedirectResponse($target, $response_code);
+          $redirect_response->addCacheableDependency($bubbleable_metadata);
+          return $redirect_response;
         }
         else {
           // If a response already exists we don't need to do anything with it.
