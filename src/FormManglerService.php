@@ -245,13 +245,13 @@ class FormManglerService {
       && $attach['#form_id'] === $entity_plugin->getGlobalConfigFormId();
 
     if ($is_global_form) {
-      $submit_handler_locations = $entity_plugin->getGlobalFormSubmitHandlerAttachLocations();
+      $submit_handler_locations = $entity_plugin->getGlobalFormSubmitHandlerAttachLocations($attach, $form_state);
     }
     elseif ($is_bundle) {
-      $submit_handler_locations = $entity_plugin->getBundleFormSubmitHandlerAttachLocations();
+      $submit_handler_locations = $entity_plugin->getBundleFormSubmitHandlerAttachLocations($attach, $form_state);
     }
     else {
-      $submit_handler_locations = $entity_plugin->getFormSubmitHandlerAttachLocations();
+      $submit_handler_locations = $entity_plugin->getFormSubmitHandlerAttachLocations($attach, $form_state);
     }
 
     foreach ($submit_handler_locations as $location) {

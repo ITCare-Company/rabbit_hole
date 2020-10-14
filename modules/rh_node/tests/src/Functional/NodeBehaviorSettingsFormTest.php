@@ -60,6 +60,14 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
   }
 
   /**
+   * Test that Rabbit Hole settings are created with "Field UI" enabled.
+   */
+  public function testBundleEditWithFieldUi() {
+    \Drupal::service('module_installer')->install(['field_ui']);
+    $this->testBundleFormFirstSave();
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function createEntityBundle() {
