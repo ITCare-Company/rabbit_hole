@@ -198,9 +198,9 @@ class FormManglerService {
     if ($is_bundle_or_entity_type) {
       $form['rabbit_hole']['rh_override'] = [
         '#type' => 'checkbox',
-        '#title' => t('Allow these settings to be overridden for individual entities'),
+        '#title' => $this->t('Allow these settings to be overridden for individual entities'),
         '#default_value' => $bundle_settings->get('allow_override'),
-        '#description' => t('If this is checked, users with the %permission permission will be able to override these settings for individual entities.', ['%permission' => t('Administer Rabbit Hole settings for @entity_type', ['@entity_type' => $entity_label])]),
+        '#description' => $this->t('If this is checked, users with the %permission permission will be able to override these settings for individual entities.', ['%permission' => $this->t('Administer Rabbit Hole settings for @entity_type', ['@entity_type' => $entity_label])]),
       ];
     }
 
@@ -212,7 +212,7 @@ class FormManglerService {
       // the configuration for the bundle.
       $action_bundle = $bundle_settings->get('action');
       $action_options = [
-        self::RABBIT_HOLE_USE_DEFAULT => t('Global @bundle behavior (@setting)', ['@bundle' => strtolower($bundle_label), '@setting' => $action_options[$action_bundle]]),
+        self::RABBIT_HOLE_USE_DEFAULT => $this->t('Global @bundle behavior (@setting)', ['@bundle' => strtolower($bundle_label), '@setting' => $action_options[$action_bundle]]),
       ] + $action_options;
     }
 

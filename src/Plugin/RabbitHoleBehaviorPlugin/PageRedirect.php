@@ -250,7 +250,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
 
     $form['rabbit_hole']['redirect'] = [
       '#type' => 'fieldset',
-      '#title' => t('Redirect settings'),
+      '#title' => $this->t('Redirect settings'),
       '#attributes' => ['class' => ['rabbit-hole-redirect-options']],
       '#states' => [
         'visible' => [
@@ -262,8 +262,8 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     // Get the default value for the redirect path.
     // Build the descriptive text.
     $description = [];
-    $description[] = t('Enter the relative path or the full URL that the user should get redirected to. Query strings and fragments are supported, such as %example.', ['%example' => 'http://www.example.com/?query=value#fragment']);
-    $description[] = t(
+    $description[] = $this->t('Enter the relative path or the full URL that the user should get redirected to. Query strings and fragments are supported, such as %example.', ['%example' => 'http://www.example.com/?query=value#fragment']);
+    $description[] = $this->t(
       'You may enter tokens in this field, such as %example1 or %example2.', [
         '%example1' => '[node:field_link]',
         '%example2' => '/my/view?page=[node:field_page_number]',
@@ -271,7 +271,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
 
     $form['rabbit_hole']['redirect']['rh_redirect'] = [
       '#type' => 'textfield',
-      '#title' => t('Redirect path'),
+      '#title' => $this->t('Redirect path'),
       '#default_value' => $redirect,
       '#description' => '<p>' . implode('</p><p>', $description) . '</p>',
       '#attributes' => ['class' => ['rabbit-hole-redirect-setting']],
@@ -319,7 +319,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       ],
       '#default_value' => $redirect_code,
       '#description' => $this->t('The response code that should be sent to the users browser. Follow @link for more information on response codes.',
-        ['@link' => Link::fromTextAndUrl(t('this link'), Url::fromUri('http://api.drupal.org/api/drupal/includes--common.inc/function/drupal_goto/7'))->toString()]),
+        ['@link' => Link::fromTextAndUrl($this->t('this link'), Url::fromUri('http://api.drupal.org/api/drupal/includes--common.inc/function/drupal_goto/7'))->toString()]),
       '#attributes' => ['class' => ['rabbit-hole-redirect-response-setting']],
     ];
 
