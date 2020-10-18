@@ -3,7 +3,6 @@
 namespace Drupal\Tests\rh_node\Functional;
 
 use Drupal\Core\Url;
-use Drupal\node\Entity\Node;
 use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
 use Drupal\Tests\rabbit_hole\Functional\RabbitHoleBehaviorSettingsFormTestBase;
@@ -99,13 +98,6 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
       $values['rh_action'] = $action;
     }
     return $this->drupalCreateNode($values)->id();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function loadEntity($id) {
-    return Node::load($id);
   }
 
   /**

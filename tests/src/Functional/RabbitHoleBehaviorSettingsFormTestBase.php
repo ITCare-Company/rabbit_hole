@@ -280,6 +280,21 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   }
 
   /**
+   * Loads test entity.
+   *
+   * @param mixed
+   *   ID of loaded entity.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   Loaded entity.
+   */
+  protected function loadEntity($id) {
+    $storage = \Drupal::entityTypeManager()->getStorage($this->entityType);
+    $storage->resetCache([$id]);
+    return $storage->load($id);
+  }
+
+  /**
    * Formats selector of the action input.
    *
    * @param $action
@@ -334,17 +349,6 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
    *   ID of the created entity.
    */
   abstract protected function createEntity($action = NULL);
-
-  /**
-   * Loads test entity.
-   *
-   * @param mixed
-   *   ID of loaded entity.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface
-   *   Loaded entity.
-   */
-  abstract protected function loadEntity($id);
 
   /**
    * Returns a list of admin permissions for current entity type.

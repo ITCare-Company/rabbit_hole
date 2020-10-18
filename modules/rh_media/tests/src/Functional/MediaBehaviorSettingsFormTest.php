@@ -93,13 +93,6 @@ class MediaBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
   /**
    * {@inheritdoc}
    */
-  protected function loadEntity($id) {
-    return Media::load($id);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function getCreateEntityUrl() {
     return Url::fromRoute('entity.media.add_form', ['media_type' => $this->bundle->id()]);
   }

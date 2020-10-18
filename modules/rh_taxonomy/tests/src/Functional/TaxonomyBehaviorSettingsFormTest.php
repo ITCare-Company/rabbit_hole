@@ -3,7 +3,6 @@
 namespace Drupal\Tests\rh_taxonomy\Functional;
 
 use Drupal\Core\Url;
-use Drupal\taxonomy\Entity\Term;
 use Drupal\Tests\rabbit_hole\Functional\RabbitHoleBehaviorSettingsFormTestBase;
 use Drupal\Tests\taxonomy\Traits\TaxonomyTestTrait;
 
@@ -79,13 +78,6 @@ class TaxonomyBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTes
       $values['rh_action'] = $action;
     }
     return $this->createTerm($this->bundle, $values)->id();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function loadEntity($id) {
-    return Term::load($id);
   }
 
   /**

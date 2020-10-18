@@ -4,7 +4,6 @@ namespace Drupal\Tests\rh_user\Functional;
 
 use Drupal\Core\Url;
 use Drupal\Tests\rabbit_hole\Functional\RabbitHoleBehaviorSettingsFormTestBase;
-use Drupal\user\Entity\User;
 
 /**
  * Test the functionality of the rabbit hole form additions to the user entity.
@@ -74,13 +73,6 @@ class UserBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
       $values['rh_action'] = $action;
     }
     return $this->drupalCreateUser([], $this->randomMachineName(), FALSE, $values)->id();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function loadEntity($id) {
-    return User::load($id);
   }
 
   /**
