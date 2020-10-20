@@ -97,7 +97,7 @@ class ProductBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTest
     $product = Product::create($values + [
       'title' => $this->randomString(),
       'type' => $this->bundle->id(),
-      'store' => $this->store->id(),
+      'stores' => [$this->store],
     ]);
     $product->save();
 
