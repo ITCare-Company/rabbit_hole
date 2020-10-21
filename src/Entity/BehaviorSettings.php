@@ -25,11 +25,13 @@ use Drupal\rabbit_hole\Exception\InvalidBehaviorSettingException;
  *   },
  *   config_export = {
  *     "id",
+ *     "entity_type_id",
+ *     "entity_id",
  *     "uuid",
  *     "action",
  *     "allow_override",
  *     "redirect",
- *     "redirect_code"
+ *     "redirect_code",
  *   },
  *   links = {}
  * )
