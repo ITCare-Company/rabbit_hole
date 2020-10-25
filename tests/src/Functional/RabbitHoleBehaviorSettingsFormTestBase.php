@@ -119,6 +119,29 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   }
 
   /**
+   * Test Rabbit Hole settings with allowed/disallowed overrides.
+   */
+  public function testAllowOverrideValue() {
+    $bundle_allow = $this->createEntityBundle();
+    $this->behaviorSettingsManager->saveBehaviorSettings([
+      'action' => 'access_denied',
+      'allow_override' => BehaviorSettings::OVERRIDE_ALLOW,
+      'redirect_code' => BehaviorSettings::REDIRECT_NOT_APPLICABLE,
+    ], $this->bundleEntityTypeName, $bundle_allow);
+    $this->loadCreateEntityForm();
+    $this->assertRabbitHoleSettings();
+
+    $bundle_disallow = $this->createEntityBundle();
+    $this->behaviorSettingsManager->saveBehaviorSettings([
+      'action' => 'access_denied',
+      'allow_override' => BehaviorSettings::OVERRIDE_DISALLOW,
+      'redirect_code' => BehaviorSettings::REDIRECT_NOT_APPLICABLE,
+    ], $this->bundleEntityTypeName, $bundle_disallow);
+    $this->loadCreateEntityForm();
+    $this->assertNoRabbitHoleSettings();
+  }
+
+  /**
    * Test that bundle form with a configured bundle behaviour loads config.
    */
   public function testBundleFormExistingBehavior() {

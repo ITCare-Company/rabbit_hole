@@ -34,8 +34,6 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
    */
   protected $bundleEntityTypeName = 'node_type';
 
-  const TEST_BUNDLE = 'rh_node_test_content_type';
-
   /**
    * {@inheritdoc}
    */
@@ -62,7 +60,7 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
    */
   protected function createEntityBundle() {
     $this->bundle = $this->drupalCreateContentType([
-      'type' => self::TEST_BUNDLE,
+      'type' => mb_strtolower($this->randomMachineName()),
     ]);
     return $this->bundle->id();
   }
@@ -90,8 +88,8 @@ class NodeBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBas
    */
   protected function createEntity($action = NULL) {
     $values = [
-      'type' => self::TEST_BUNDLE,
-      'title' => 'Test Behavior Settings Node',
+      'type' => $this->bundle->id(),
+      'title' => $this->randomString(),
     ];
 
     if (isset($action)) {
