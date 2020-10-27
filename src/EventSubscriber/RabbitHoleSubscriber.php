@@ -3,9 +3,9 @@
 namespace Drupal\rabbit_hole\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\rabbit_hole\BehaviorInvoker;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 
 /**
  * Class EventSubscriber.
@@ -43,10 +43,10 @@ class RabbitHoleSubscriber implements EventSubscriberInterface {
    * It invokes a rabbit hole behavior on an entity in the request if
    * applicable.
    *
-   * @param \Symfony\Component\EventDispatcher\Event $event
+   * @param \Symfony\Component\HttpKernel\Event\KernelEvent $event
    *   The event triggered by the request.
    */
-  public function onRequest(Event $event) {
+  public function onRequest(KernelEvent $event) {
     return $this->processEvent($event);
   }
 
@@ -57,20 +57,20 @@ class RabbitHoleSubscriber implements EventSubscriberInterface {
    * the request if possible. Unlike the onRequest event, it also passes in a
    * response.
    *
-   * @param \Symfony\Component\EventDispatcher\Event $event
+   * @param \Symfony\Component\HttpKernel\Event\KernelEvent $event
    *   The event triggered by the response.
    */
-  public function onResponse(Event $event) {
+  public function onResponse(KernelEvent $event) {
     return $this->processEvent($event);
   }
 
   /**
    * Process events generically invoking rabbit hole behaviors if necessary.
    *
-   * @param \Symfony\Component\EventDispatcher\Event $event
+   * @param \Symfony\Component\HttpKernel\Event\KernelEvent $event
    *   The event to process.
    */
-  private function processEvent(Event $event) {
+  private function processEvent(KernelEvent $event) {
     // Don't process events with HTTP exceptions - those have either been thrown
     // by us or have nothing to do with rabbit hole.
     if ($event->getRequest()->get('exception') != NULL) {
