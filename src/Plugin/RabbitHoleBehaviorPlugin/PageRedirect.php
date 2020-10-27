@@ -161,15 +161,15 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     );
     $target = PlainTextOutput::renderFromHtml($target);
 
-    if ($target === '<front>' || $target === '/<front>') {
-      // Special case for redirecting to the front page.
-      $target = \Drupal::service('url_generator')->generateFromRoute('<front>', [], []);
-    }
-
     // If non-absolute URI, pass URL through Drupal's URL generator to
     // handle languages etc.
     if (!UrlHelper::isExternal($target)) {
-      $target = Url::fromUserInput($target)->toString();
+      $scheme = parse_url($target, PHP_URL_SCHEME);
+      if ($scheme === NULL) {
+        $target = 'internal:' . $target;
+      }
+
+      $target = Url::fromUri($target)->toString();
     }
 
     switch ($response_code) {

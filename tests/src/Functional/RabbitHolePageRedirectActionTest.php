@@ -53,13 +53,31 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
    * Tests available redirect codes.
    */
   public function testRedirectCodes() {
-    $this->assertRedirect(301);
-    $this->assertRedirect(302);
-    $this->assertRedirect(303);
+    $target_entity = $this->createTestNode('display_page');
+    $destination_path = $target_entity->toUrl()->toString();
+
+    $this->assertPageRedirect($destination_path, $destination_path, 301);
+    $this->assertPageRedirect($destination_path, $destination_path, 302);
+    $this->assertPageRedirect($destination_path, $destination_path, 303);
     // TODO: Figure out what should happen on 304 code.
     // $this->assertUrlRedirect(304);.
-    $this->assertRedirect(305);
-    $this->assertRedirect(307);
+    $this->assertPageRedirect($destination_path, $destination_path, 305);
+    $this->assertPageRedirect($destination_path, $destination_path, 307);
+  }
+
+  /**
+   * Test available URL patterns.
+   */
+  public function testRedirectPaths() {
+    $test_node = $this->createTestNode();
+
+    $this->assertPageRedirect('/node', '/node');
+    $this->assertPageRedirect('https://example.com', 'https://example.com');
+    $this->assertPageRedirect('/<front>', '/');
+    $this->assertPageRedirect('internal:/node', '/node');
+    $this->assertPageRedirect('entity:node/' . $test_node->id(), $test_node->toUrl());
+    $this->assertPageRedirect('base:robots.txt', '/robots.txt');
+    $this->assertPageRedirect('route:system.401', '/system/401');
   }
 
   /**
@@ -142,17 +160,15 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
   /**
    * Test URL redirects (destination and redirect code).
    */
-  protected function assertRedirect($redirect_code) {
-    $target_entity = $this->createTestNode('display_page');
-    $destination_path = $target_entity->toUrl()->toString();
-
+  protected function assertPageRedirect($destination_path, $expected_path, $redirect_code = 301) {
     $entity = $this->createTestNode('page_redirect');
     $entity->set('rh_redirect', $destination_path);
     $entity->set('rh_redirect_response', $redirect_code);
     $entity->save();
 
     $this->drupalGet($entity->toUrl());
-    $this->assertSession()->addressEquals($destination_path);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->addressEquals($expected_path);
   }
 
   /**

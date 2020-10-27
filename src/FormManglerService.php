@@ -293,6 +293,8 @@ class FormManglerService {
       $redirect = $form_state->getValue('rh_redirect');
 
       if (!UrlHelper::isExternal($redirect)) {
+        $scheme = parse_url($redirect, PHP_URL_SCHEME);
+
         // Check if internal URL matches requirements of
         // \Drupal\Core\Url::fromUserInput.
         $accepted_internal_characters = [
@@ -302,7 +304,7 @@ class FormManglerService {
           '[',
         ];
 
-        if (!in_array(substr($redirect, 0, 1), $accepted_internal_characters)) {
+        if ($scheme === NULL && !in_array(substr($redirect, 0, 1), $accepted_internal_characters)) {
           $form_state->setErrorByName('rh_redirect', t("Internal path '@string' must begin with a '/', '?', '#', or be a token.", ['@string' => $redirect]));
         }
       }
