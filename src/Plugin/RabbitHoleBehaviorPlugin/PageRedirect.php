@@ -79,6 +79,13 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
   protected $token;
 
   /**
+   * Cache metadata for the redirect response.
+   *
+   * @var \Drupal\Core\Render\BubbleableMetadata
+   */
+  protected $cacheMetadata;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -93,6 +100,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     $this->rhEntityPluginManager = $rhepm;
     $this->moduleHandler = $mhi;
     $this->token = $token;
+    $this->cacheMetadata = new BubbleableMetadata();
   }
 
   /**
@@ -113,58 +121,13 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
    * {@inheritdoc}
    */
   public function performAction(EntityInterface $entity, Response $current_response = NULL) {
-    // BubbleableMetadata object to collect redirect cacheability metadata.
-    $bubbleable_metadata = new BubbleableMetadata();
-
-    $target = $entity->get('rh_redirect')->value;
-    $response_code = NULL;
-
-    if (empty($target)) {
-      $bundle_settings = $this->getBundleSettings($entity);
-      $target = $bundle_settings->get('redirect');
-      $response_code = $bundle_settings->get('redirect_code');
-      $bubbleable_metadata->addCacheableDependency($bundle_settings);
-    }
-    else {
-      $response_code = $entity->get('rh_redirect_response')->value;
-    }
-
-    // Replace any tokens if applicable.
-    $langcode = $entity->language()->getId();
-
-    if ($langcode == LanguageInterface::LANGCODE_NOT_APPLICABLE) {
-      $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED;
-    }
-
-    $target = $this->token->replace($target, [
-      $entity->getEntityTypeId() => $entity,
-    ], [
-        'clear' => TRUE,
-        'langcode' => $langcode,
-      ], $bubbleable_metadata
-    );
-    $target = PlainTextOutput::renderFromHtml($target);
+    $target = $this->getActionTarget($entity);
+    $response_code = $this->getActionResponseCode($entity);
 
     // The fallback action is executed if redirect target is either empty or
     // has invalid value.
     if (empty($target)) {
       return $this->getFallbackAction($entity);
-    }
-
-    // If non-absolute URI, pass URL through Drupal's URL generator to
-    // handle languages etc.
-    if (!UrlHelper::isExternal($target)) {
-      $scheme = parse_url($target, PHP_URL_SCHEME);
-      if ($scheme === NULL) {
-        $target = 'internal:' . $target;
-      }
-
-      try {
-        $target = Url::fromUri($target)->toString();
-      }
-      catch (\InvalidArgumentException $exception) {
-        return $this->getFallbackAction($entity);
-      }
     }
 
     switch ($response_code) {
@@ -174,7 +137,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       case self::REDIRECT_TEMPORARY_REDIRECT:
         if ($current_response === NULL) {
           $redirect_response = new TrustedRedirectResponse($target, $response_code);
-          $redirect_response->addCacheableDependency($bubbleable_metadata);
+          $redirect_response->addCacheableDependency($this->cacheMetadata);
           return $redirect_response;
         }
         else {
@@ -209,6 +172,82 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       default:
         throw new InvalidRedirectResponseException();
     }
+  }
+
+  /**
+   * Returns the action target URL object.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity the action is being performed on.
+   * @return string|NULL
+   *   Absolute destination URL or NULL if proper URL wasn't found.
+   */
+  public function getActionTarget(EntityInterface $entity) {
+    $target = $entity->get('rh_redirect')->value;
+    if (empty($target)) {
+      $bundle_settings = $this->getBundleSettings($entity);
+      $target = $bundle_settings->get('redirect');
+      $this->cacheMetadata->addCacheableDependency($bundle_settings);
+    }
+
+    // Replace any tokens if applicable.
+    $langcode = $entity->language()->getId();
+
+    if ($langcode == LanguageInterface::LANGCODE_NOT_APPLICABLE) {
+      $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED;
+    }
+
+    $target = $this->token->replace($target, [
+      $entity->getEntityTypeId() => $entity,
+    ], [
+      'clear' => TRUE,
+      'langcode' => $langcode,
+    ], $this->cacheMetadata);
+    $target = PlainTextOutput::renderFromHtml($target);
+
+    if (empty($target)) {
+      return NULL;
+    }
+
+    // If non-absolute URI, pass URL through Drupal's URL generator to
+    // handle languages etc.
+    if (!UrlHelper::isExternal($target)) {
+      $scheme = parse_url($target, PHP_URL_SCHEME);
+      if ($scheme === NULL) {
+        $target = 'internal:' . $target;
+      }
+
+      try {
+        $target = Url::fromUri($target)->toString();
+      }
+      catch (\InvalidArgumentException $exception) {
+        return NULL;
+      }
+    }
+
+    return $target;
+  }
+
+  /**
+   * Returns the action response code.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity the action is being performed on.
+   *
+   * @return int
+   *   Redirect code.
+   */
+  public function getActionResponseCode(EntityInterface $entity) {
+    $target = $entity->get('rh_redirect')->value;
+    if (empty($target)) {
+      $bundle_settings = $this->getBundleSettings($entity);
+      $response_code = $bundle_settings->get('redirect_code');
+      $this->cacheMetadata->addCacheableDependency($bundle_settings);
+    }
+    else {
+      $response_code = $entity->get('rh_redirect_response')->value;
+    }
+    return $response_code;
   }
 
   /**
@@ -384,6 +423,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     if (empty($fallback_action) || $fallback_action === 'bundle_default') {
       $bundle_settings = $this->getBundleSettings($entity);
       $fallback_action = $bundle_settings->get('redirect_fallback_action');
+      $this->cacheMetadata->addCacheableDependency($bundle_settings);
     }
     return !empty($fallback_action) ? $fallback_action : parent::getFallbackAction($entity);
   }
