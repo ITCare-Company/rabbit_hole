@@ -150,12 +150,6 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
     $plugin = $this->manager->createInstance('page_redirect', ['of' => 'configuration values']);
     $this->assertInstanceOf(PageRedirect::class, $plugin, 'The page redirect plugin is the correct type.');
 
-    // Test the settings form.
-    $form = $form_state = [];
-    $plugin->settingsForm($form, $form_state, 'test', $this->entity);
-    $this->assertNotEmpty($form, 'Page redirect plugin defines a settings form.');
-    $this->assertEmpty($form_state, 'Page redirect plugin form state was not changed.');
-
     // Check that the plugin performs the expected action.
     // TODO: Check that $plugin->performAction() does what it's supposed to,
     // whatever that is.

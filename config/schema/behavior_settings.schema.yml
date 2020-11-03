@@ -23,3 +23,6 @@ rabbit_hole.behavior_settings.*:
     redirect_code:
       type: integer
       label: 'Redirect code'
+    redirect_fallback_action:
+      type: string
+      label: 'Fallback action'

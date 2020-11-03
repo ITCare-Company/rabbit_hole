@@ -18,7 +18,6 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginBase;
 use Drupal\rabbit_hole\Exception\InvalidRedirectResponseException;
-use Drupal\rabbit_hole\BehaviorSettingsManagerInterface;
 use Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -59,13 +58,6 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
   private $code;
 
   /**
-   * The behavior settings manager.
-   *
-   * @var Drupal\rabbit_hole\BehaviorSettingsManagerInterface
-   */
-  protected $rhBehaviorSettingsManager;
-
-  /**
    * The entity plugin manager.
    *
    * @var Drupal\rabbit_hole\Entity\RabbitHoleEntityPluginManager;
@@ -93,13 +85,11 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    BehaviorSettingsManagerInterface $bsm,
     RabbitHoleEntityPluginManager $rhepm,
     ModuleHandlerInterface $mhi,
     Token $token) {
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->rhBehaviorSettingsManager = $bsm;
     $this->rhEntityPluginManager = $rhepm;
     $this->moduleHandler = $mhi;
     $this->token = $token;
@@ -109,11 +99,10 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static (
+    return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('rabbit_hole.behavior_settings_manager'),
       $container->get('plugin.manager.rabbit_hole_entity_plugin'),
       $container->get('module_handler'),
       $container->get('token')
@@ -130,13 +119,8 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     $target = $entity->get('rh_redirect')->value;
     $response_code = NULL;
 
-    $bundle_entity_type = $entity->getEntityType()->getBundleEntityType();
-    $bundle_settings = $this->rhBehaviorSettingsManager
-      ->loadBehaviorSettingsAsConfig(
-        $bundle_entity_type ?: $entity->getEntityType()->id(),
-        $bundle_entity_type ? $entity->bundle() : NULL);
-
     if (empty($target)) {
+      $bundle_settings = $this->getBundleSettings($entity);
       $target = $bundle_settings->get('redirect');
       $response_code = $bundle_settings->get('redirect_code');
       $bubbleable_metadata->addCacheableDependency($bundle_settings);
@@ -161,6 +145,12 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     );
     $target = PlainTextOutput::renderFromHtml($target);
 
+    // The fallback action is executed if redirect target is either empty or
+    // has invalid value.
+    if (empty($target)) {
+      return $this->getFallbackAction($entity);
+    }
+
     // If non-absolute URI, pass URL through Drupal's URL generator to
     // handle languages etc.
     if (!UrlHelper::isExternal($target)) {
@@ -169,7 +159,12 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
         $target = 'internal:' . $target;
       }
 
-      $target = Url::fromUri($target)->toString();
+      try {
+        $target = Url::fromUri($target)->toString();
+      }
+      catch (\InvalidArgumentException $exception) {
+        return $this->getFallbackAction($entity);
+      }
     }
 
     switch ($response_code) {
@@ -230,10 +225,12 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
 
     $redirect = NULL;
     $redirect_code = NULL;
+    $redirect_fallback_action = NULL;
 
     if ($entity_is_bundle) {
       $redirect = $bundle_settings->get('redirect');
       $redirect_code = $bundle_settings->get('redirect_code');
+      $redirect_fallback_action = $bundle_settings->get('redirect_fallback_action');
     }
     elseif (isset($entity)) {
       $redirect = isset($entity->rh_redirect->value)
@@ -242,6 +239,9 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       $redirect_code = isset($entity->rh_redirect_response->value)
         ? $entity->rh_redirect_response->value
         : self::RABBIT_HOLE_PAGE_REDIRECT_RESPONSE_DEFAULT;
+      $redirect_fallback_action = isset($entity->rh_redirect_fallback_action->value)
+        ? $entity->rh_redirect_fallback_action->value
+        : 'bundle_default';
     }
     else {
       $redirect = NULL;
@@ -262,7 +262,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     // Get the default value for the redirect path.
     // Build the descriptive text.
     $description = [];
-    $description[] = $this->t('Enter the relative path or the full URL that the user should get redirected to. Query strings and fragments are supported, such as %example.', ['%example' => 'http://www.example.com/?query=value#fragment']);
+    $description[] = $this->t('Enter the %front tag, relative path or the full URL that the user should get redirected to. Query strings and fragments are supported, such as %example.', ['%front' => '<front>', '%example' => 'http://www.example.com/?query=value#fragment']);
     $description[] = $this->t(
       'You may enter tokens in this field, such as %example1 or %example2.', [
         '%example1' => '[node:field_link]',
@@ -278,6 +278,11 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       '#rows' => substr_count($redirect, "\r\n") + 2,
       '#element_validate' => [],
       '#after_build' => [],
+      '#states' => [
+        'required' => [
+          ':input[name="rh_action"]' => ['value' => $this->getPluginId()],
+        ],
+      ],
       '#maxlength' => 2000,
     ];
 
@@ -323,6 +328,27 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       '#attributes' => ['class' => ['rabbit-hole-redirect-response-setting']],
     ];
 
+    // Add fallback action setting with all available options except page
+    // redirect.
+    $fallback_options = $form['rh_action']['#options'];
+    unset($fallback_options['page_redirect']);
+
+    if (isset($fallback_options['bundle_default'])) {
+      $args = $fallback_options['bundle_default']->getArguments();
+      $bundle_settings = $this->getBundleSettings($entity);
+      $bundle_fallback = $bundle_settings->get('redirect_fallback_action');
+      $fallback_options['bundle_default'] = $this->t('Global @bundle fallback (@setting)', ['@bundle' => $args['@bundle'], '@setting' => $bundle_fallback]);
+    }
+
+    $form['rabbit_hole']['redirect']['rh_redirect_fallback_action'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Fallback behavior'),
+      '#options' => $fallback_options,
+      '#default_value' => $redirect_fallback_action,
+      '#description' => $this->t('What should happen when the redirect is invalid/empty?'),
+      '#attributes' => ['class' => ['rabbit-hole-redirect-fallback-action-setting']],
+    ];
+
     // Display a list of tokens if the Token module is enabled.
     if ($this->moduleHandler->moduleExists('token')) {
       $form['rabbit_hole']['redirect']['token_help'] = [
@@ -344,6 +370,22 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       ->setName('rh_redirect_response')
       ->setLabel($this->t('Rabbit Hole redirect response code'))
       ->setDescription($this->t('Specifies the HTTP response code that should be used when perform a redirect.'));
+    $fields['rh_redirect_fallback_action'] = BaseFieldDefinition::create('string')
+      ->setName('rh_redirect_fallback_action')
+      ->setLabel($this->t('Rabbit Hole redirect fallback action'))
+      ->setDescription($this->t('Specifies the action that should be used when the redirect path is invalid or empty.'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getFallbackAction(EntityInterface $entity) {
+    $fallback_action = $entity->get('rh_redirect_fallback_action')->value;
+    if (empty($fallback_action) || $fallback_action === 'bundle_default') {
+      $bundle_settings = $this->getBundleSettings($entity);
+      $fallback_action = $bundle_settings->get('redirect_fallback_action');
+    }
+    return !empty($fallback_action) ? $fallback_action : parent::getFallbackAction($entity);
   }
 
 }

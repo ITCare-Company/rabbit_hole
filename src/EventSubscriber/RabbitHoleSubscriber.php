@@ -5,6 +5,7 @@ namespace Drupal\rabbit_hole\EventSubscriber;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\rabbit_hole\BehaviorInvoker;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
 
 /**
@@ -90,7 +91,7 @@ class RabbitHoleSubscriber implements EventSubscriberInterface {
           if (isset($entity) && $entity instanceof ContentEntityInterface) {
             $new_response = $this->rabbitHoleBehaviorInvoker
               ->processEntity($entity, $event->getResponse());
-            if (isset($new_response)) {
+            if ($new_response instanceof Response) {
               $event->setResponse($new_response);
             }
             break;

@@ -21,7 +21,8 @@ use Drupal\rabbit_hole\Exception\InvalidBehaviorSettingException;
  *     "action" = "action",
  *     "allow_override" = "allow_override",
  *     "redirect" = "redirect",
- *     "redirect_code" = "redirect_code"
+ *     "redirect_code" = "redirect_code",
+ *     "redirect_fallback_action" = "redirect_fallback_action"
  *   },
  *   config_export = {
  *     "id",
@@ -32,6 +33,7 @@ use Drupal\rabbit_hole\Exception\InvalidBehaviorSettingException;
  *     "allow_override",
  *     "redirect",
  *     "redirect_code",
+ *     "redirect_fallback_action"
  *   },
  *   links = {}
  * )

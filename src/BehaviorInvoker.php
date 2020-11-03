@@ -76,21 +76,15 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *    The entity to apply rabbit hole behavior on.
-   * @param Symfony\Component\HttpFoundation\Response $current_response
+   * @param \Symfony\Component\HttpFoundation\Response $current_response
    *    The current response, to be passed along to and potentially altered by
    *    any called rabbit hole plugin.
    *
-   * @return Symfony\Component\HttpFoundation\Response|null
-   *    A response or null if the response is unchanged.
+   * @return \Symfony\Component\HttpFoundation\Response|NULL
+   *    A response or NULL if the response is unchanged.
    *
-   * @throws Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-   *   The PageNotFound plugin may throw a NotFoundHttpException which is not
-   *   handled by this method. This usually shouldn't be caught as it is
-   *   intended behavior.
-   * @throws Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
-   *   The PageNotFound plugin may throw a NotFoundHttpException which is not
-   *   handled by this method. This usually shouldn't be caught as it is
-   *   intended behavior.
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function processEntity(ContentEntityInterface $entity, Response $current_response = NULL) {
     $permission = 'rabbit hole bypass ' . $entity->getEntityTypeId();
@@ -123,7 +117,16 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
       // require a response so that case is handled.
       || $response_required && $current_response != NULL) {
 
-      return $plugin->performAction($entity, $current_response);
+      $response = $plugin->performAction($entity, $current_response);
+
+      // Execute a fallback action until we have correct response object.
+      // It allows us to have a chain of fallback actions until we execute the
+      // final one.
+      while (!$response instanceof Response && is_string($response) && $this->rhBehaviorPluginManager->getDefinition($response, FALSE) !== NULL) {
+        $fallback_plugin = $this->rhBehaviorPluginManager->createInstance($response, []);
+        $response = $fallback_plugin->performAction($entity, $current_response);
+      }
+      return $response;
     }
     // All other cases return NULL, meaning the response is unchanged.
     else {

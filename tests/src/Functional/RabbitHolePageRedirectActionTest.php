@@ -158,6 +158,49 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
   }
 
   /**
+   * Test fallback action behavior.
+   */
+  public function testFallbackAction() {
+    $content_type = $this->drupalCreateContentType([
+      'type' => mb_strtolower($this->randomMachineName()),
+    ]);
+    $this->behaviorSettingsManager->saveBehaviorSettings([
+      'action' => 'display_page',
+      'allow_override' => TRUE,
+      'redirect_fallback_action' => 'access_denied',
+    ], 'node_type', $content_type->id());
+
+    // Create a test node with redirect to not-existing field.
+    $node1 = $this->drupalCreateNode([
+      'type' => $content_type->id(),
+      'title' => $this->randomString(),
+      'rh_action' => 'page_redirect',
+      'rh_redirect' => '[node:field_related_media:entity:field_media_document:entity:url]',
+      'rh_redirect_response' => 301,
+    ]);
+
+    $this->drupalGet($node1->toUrl());
+    // Default fallback action should be "Access Denied".
+    $this->assertSession()->addressEquals($node1->toUrl());
+    $this->assertSession()->statusCodeEquals(403);
+
+    // Create another test node with redirect to invalid URL value and overriden
+    // fallback action.
+    $node2 = $this->drupalCreateNode([
+      'type' => $content_type->id(),
+      'title' => $this->randomString(),
+      'rh_action' => 'page_redirect',
+      'rh_redirect' => 'invalidscheme:/random',
+      'rh_redirect_response' => 301,
+      'rh_redirect_fallback_action' => 'page_not_found',
+    ]);
+    $node2->save();
+    $this->drupalGet($node2->toUrl());
+    $this->assertSession()->addressEquals($node2->toUrl());
+    $this->assertSession()->statusCodeEquals(404);
+  }
+
+  /**
    * Test URL redirects (destination and redirect code).
    */
   protected function assertPageRedirect($destination_path, $expected_path, $redirect_code = 301) {

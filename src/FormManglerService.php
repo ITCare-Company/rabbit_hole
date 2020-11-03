@@ -335,10 +335,9 @@ class FormManglerService {
         [
           'action' => $form_state->getValue('rh_action'),
           'allow_override' => $allow_override,
-          'redirect' => $form_state->getValue('rh_redirect')
-          ?: '',
-          'redirect_code' => $form_state->getValue('rh_redirect_response')
-          ?: BehaviorSettings::REDIRECT_NOT_APPLICABLE,
+          'redirect' => $form_state->getValue('rh_redirect') ?: '',
+          'redirect_code' => $form_state->getValue('rh_redirect_response') ?: BehaviorSettings::REDIRECT_NOT_APPLICABLE,
+          'redirect_fallback_action' => $form_state->getvalue('rh_redirect_fallback_action') ?: 'access_denied',
         ],
         $form_state->getValue('rh_entity_type'),
         isset($entity) ? $entity->id() : NULL

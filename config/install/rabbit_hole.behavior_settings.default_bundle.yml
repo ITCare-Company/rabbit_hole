@@ -7,3 +7,4 @@ allow_override: 1
 # N/A
 redirect_code: 0
 redirect: ''
+redirect_fallback_action: "access_denied"
