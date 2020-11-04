@@ -33,10 +33,25 @@ class RabbitHoleBehaviorSettingsTest extends BrowserTestBase {
    */
   public static $modules = ['rabbit_hole', self::DEFAULT_TEST_ENTITY];
 
+  /**
+   * Behavior settings manager.
+   *
+   * @var \Drupal\rabbit_hole\BehaviorSettingsManager
+   */
   private $behaviorSettingsManager;
 
+  /**
+   * Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
   private $configFactory;
 
+  /**
+   * Test content type.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface
+   */
   private $testNodeType;
 
   /**

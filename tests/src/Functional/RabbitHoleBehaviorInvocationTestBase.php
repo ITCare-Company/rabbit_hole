@@ -95,7 +95,7 @@ abstract class RabbitHoleBehaviorInvocationTestBase extends BrowserTestBase {
    */
   public function testPageRedirect() {
     $this->createEntityBundle();
-    $destination_path = $this->createEntity( 'display_page')
+    $destination_path = $this->createEntity('display_page')
       ->toUrl('canonical', ['absolute' => TRUE])
       ->toString();
 

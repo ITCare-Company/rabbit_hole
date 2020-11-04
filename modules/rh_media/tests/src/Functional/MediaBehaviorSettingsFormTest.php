@@ -115,7 +115,13 @@ class MediaBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
    * {@inheritdoc}
    */
   protected function getAdminPermissions() {
-    return ['access media overview', 'administer media', 'administer media types', 'view media', 'rabbit hole bypass media'];
+    return [
+      'access media overview',
+      'administer media',
+      'administer media types',
+      'view media',
+      'rabbit hole bypass media',
+    ];
   }
 
 }

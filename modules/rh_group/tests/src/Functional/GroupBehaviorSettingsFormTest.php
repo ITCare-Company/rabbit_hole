@@ -38,13 +38,6 @@ class GroupBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    parent::setUp();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function createEntityBundle() {
     // TODO: Switch to trait when/if the patch is committed and released.
     // See: https://www.drupal.org/project/group/issues/3177542

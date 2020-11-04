@@ -31,7 +31,10 @@ class NodeBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
       'type' => self::TEST_BUNDLE,
     ]);
     if (isset($action)) {
-      $this->behaviorSettingsManager->saveBehaviorSettings(['action' => $action, 'allow_override' => TRUE], 'node_type', $bundle->id());
+      $this->behaviorSettingsManager->saveBehaviorSettings([
+        'action' => $action,
+        'allow_override' => TRUE,
+      ], 'node_type', $bundle->id());
     }
     return $bundle->id();
   }

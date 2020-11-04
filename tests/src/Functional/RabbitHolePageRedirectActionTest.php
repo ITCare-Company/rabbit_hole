@@ -46,7 +46,10 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
     $this->behaviorSettingsManager = $this->container->get('rabbit_hole.behavior_settings_manager');
-    $this->behaviorSettingsManager->saveBehaviorSettings(['action' => 'display_page', 'allow_override' => TRUE], 'node_type', 'article');
+    $this->behaviorSettingsManager->saveBehaviorSettings([
+      'action' => 'display_page',
+      'allow_override' => TRUE,
+    ], 'node_type', 'article');
   }
 
   /**

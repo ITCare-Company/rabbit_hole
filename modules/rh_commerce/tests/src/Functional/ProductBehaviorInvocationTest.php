@@ -46,7 +46,10 @@ class ProductBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase
     $this->productType = $product_type;
 
     if (isset($action)) {
-      $this->behaviorSettingsManager->saveBehaviorSettings(['action' => $action, 'allow_override' => TRUE], 'commerce_product_type', $this->productType->id());
+      $this->behaviorSettingsManager->saveBehaviorSettings([
+        'action' => $action,
+        'allow_override' => TRUE,
+      ], 'commerce_product_type', $this->productType->id());
     }
     return $this->productType->id();
   }

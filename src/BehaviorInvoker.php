@@ -11,47 +11,58 @@ use Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginManager;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class BehaviorInvoker.
- *
- * @package Drupal\rabbit_hole
+ * Default implementation of Rabbit Hole behaviors invoker.
  */
 class BehaviorInvoker implements BehaviorInvokerInterface {
 
   /**
-   * Drupal\rabbit_hole\BehaviorSettingsManager definition.
+   * Behavior settings manager.
    *
-   * @var Drupal\rabbit_hole\BehaviorSettingsManager
+   * @var \Drupal\rabbit_hole\BehaviorSettingsManager
    */
   protected $rhBehaviorSettingsManager;
 
   /**
-   * Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager definition.
+   * Behavior plugin manager.
    *
-   * @var Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager
+   * @var \Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager
    */
   protected $rhBehaviorPluginManager;
 
   /**
-   * Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager definition.
+   * Entity plugin manager.
    *
-   * @var Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginManager
+   * @var \Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginManager
    */
   protected $rhEntityPluginManager;
 
   /**
-   * Drupal\rabbit_hole\EntityExtender definition.
+   * Entity extender service.
+   *
+   * @var \Drupal\rabbit_hole\EntityExtender
    */
   protected $rhEntityExtender;
 
   /**
    * The current user.
    *
-   * @var Drupal\Core\Session\AccountProxy\AccountProxyInterface
+   * @var \Drupal\Core\Session\AccountProxyInterface
    */
   protected $currentUser;
 
   /**
-   * Constructor.
+   * BehaviorInvoker constructor.
+   *
+   * @param \Drupal\rabbit_hole\BehaviorSettingsManager $rabbit_hole_behavior_settings_manager
+   *   Behavior settings manager.
+   * @param \Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginManager $plugin_manager_rabbit_hole_behavior_plugin
+   *   Behavior plugin manager.
+   * @param \Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginManager $plugin_manager_rabbit_hole_entity_plugin
+   *   Entity plugin manager.
+   * @param \Drupal\rabbit_hole\EntityExtender $entity_extender
+   *   Entity extender service.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
    */
   public function __construct(
     BehaviorSettingsManager $rabbit_hole_behavior_settings_manager,
@@ -75,13 +86,13 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
    * will use the defaults!
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
-   *    The entity to apply rabbit hole behavior on.
+   *   The entity to apply rabbit hole behavior on.
    * @param \Symfony\Component\HttpFoundation\Response $current_response
-   *    The current response, to be passed along to and potentially altered by
-   *    any called rabbit hole plugin.
+   *   The current response, to be passed along to and potentially altered by
+   *   any called rabbit hole plugin.
    *
-   * @return \Symfony\Component\HttpFoundation\Response|NULL
-   *    A response or NULL if the response is unchanged.
+   * @return \Symfony\Component\HttpFoundation\Response|null
+   *   A response or NULL if the response is unchanged.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -199,14 +210,15 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
   }
 
   /**
-   * An entity type's rabbit hole configuration, or the default if it does not exist.
+   * An entity type's rabbit hole config, or the default if it does not exist.
    *
-   * Return an entity types's rabbit hole configuration or, failing that, the base default
-   * configuration.
+   * Return an entity types's rabbit hole configuration or, failing that, the
+   * base default configuration.
    *
    * @return array|false
    *   An array of values from the entity's fields matching the base properties
-   *   added by rabbit hole. Explicit false if no matching configuration was found.
+   *   added by rabbit hole. Explicit false if no matching configuration was
+   *   found.
    */
   public function getRabbitHoleValuesForEntityType($entity_type_id, $bundle_id = NULL) {
     $field_keys = array_keys($this->rhEntityExtender->getGeneralExtraFields());

@@ -44,7 +44,10 @@ class GroupBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
     $this->groupType = $group_type;
 
     if (isset($action)) {
-      $this->behaviorSettingsManager->saveBehaviorSettings(['action' => $action, 'allow_override' => TRUE], 'group_type', $this->groupType->id());
+      $this->behaviorSettingsManager->saveBehaviorSettings([
+        'action' => $action,
+        'allow_override' => TRUE,
+      ], 'group_type', $this->groupType->id());
     }
     return $this->groupType->id();
   }
@@ -63,9 +66,9 @@ class GroupBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
     // See: https://www.drupal.org/project/group/issues/3177542
     $storage = \Drupal::entityTypeManager()->getStorage('group');
     $group = $storage->create($values + [
-        'type' => $this->groupType->id(),
-        'label' => $this->randomString(),
-      ]);
+      'type' => $this->groupType->id(),
+      'label' => $this->randomString(),
+    ]);
     $group->enforceIsNew();
     $storage->save($group);
 
@@ -75,7 +78,7 @@ class GroupBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
   /**
    * {@inheritdoc}
    */
-  function getViewPermissions() {
+  protected function getViewPermissions() {
     return ['bypass group access'];
   }
 

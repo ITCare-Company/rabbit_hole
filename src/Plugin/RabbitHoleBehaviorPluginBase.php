@@ -5,6 +5,7 @@ namespace Drupal\rabbit_hole\Plugin;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Base class for Rabbit hole behavior plugin plugins.
@@ -22,8 +23,8 @@ abstract class RabbitHoleBehaviorPluginBase extends PluginBase implements Rabbit
    * {@inheritdoc}
    */
   public function settingsForm(
-    &$form,
-    &$form_state,
+    array &$form,
+    FormStateInterface $form_state,
     $form_id,
     EntityInterface $entity = NULL,
     $entity_is_bundle = FALSE,

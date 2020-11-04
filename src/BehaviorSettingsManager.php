@@ -6,16 +6,14 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\rabbit_hole\Entity\BehaviorSettings;
 
 /**
- * Class BehaviorSettingsManager.
- *
- * @package Drupal\rabbit_hole
+ * Provides operations for bundles configuration.
  */
 class BehaviorSettingsManager implements BehaviorSettingsManagerInterface {
 
   /**
    * Drupal\Core\Config\ConfigFactory definition.
    *
-   * @var Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $configFactory;
 

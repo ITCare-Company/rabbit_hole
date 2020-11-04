@@ -5,6 +5,7 @@ namespace Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPlugin;
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Link;
@@ -60,21 +61,21 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
   /**
    * The entity plugin manager.
    *
-   * @var Drupal\rabbit_hole\Entity\RabbitHoleEntityPluginManager;
+   * @var \Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginManager
    */
   protected $rhEntityPluginManager;
 
   /**
    * The module handler.
    *
-   * @var Drupal\Core\Extension\ModuleHandlerInterface
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
 
   /**
    * The token service.
    *
-   * @var Drupal\Core\Utility\Token
+   * @var \Drupal\Core\Utility\Token
    */
   protected $token;
 
@@ -179,7 +180,8 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity the action is being performed on.
-   * @return string|NULL
+   *
+   * @return string|null
    *   Absolute destination URL or NULL if proper URL wasn't found.
    */
   public function getActionTarget(EntityInterface $entity) {
@@ -254,8 +256,8 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
    * {@inheritdoc}
    */
   public function settingsForm(
-    &$form,
-    &$form_state,
+    array &$form,
+    FormStateInterface $form_state,
     $form_id,
     EntityInterface $entity = NULL,
     $entity_is_bundle = FALSE,
@@ -301,11 +303,13 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     // Get the default value for the redirect path.
     // Build the descriptive text.
     $description = [];
-    $description[] = $this->t('Enter the %front tag, relative path or the full URL that the user should get redirected to. Query strings and fragments are supported, such as %example.', ['%front' => '<front>', '%example' => 'http://www.example.com/?query=value#fragment']);
-    $description[] = $this->t(
-      'You may enter tokens in this field, such as %example1 or %example2.', [
-        '%example1' => '[node:field_link]',
-        '%example2' => '/my/view?page=[node:field_page_number]',
+    $description[] = $this->t('Enter the %front tag, relative path or the full URL that the user should get redirected to. Query strings and fragments are supported, such as %example.', [
+      '%front' => '<front>',
+      '%example' => 'http://www.example.com/?query=value#fragment',
+    ]);
+    $description[] = $this->t('You may enter tokens in this field, such as %example1 or %example2.', [
+      '%example1' => '[node:field_link]',
+      '%example2' => '/my/view?page=[node:field_page_number]',
     ]);
 
     $form['rabbit_hole']['redirect']['rh_redirect'] = [
@@ -362,8 +366,9 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
         307 => $this->t('307 (Temporary redirect)'),
       ],
       '#default_value' => $redirect_code,
-      '#description' => $this->t('The response code that should be sent to the users browser. Follow @link for more information on response codes.',
-        ['@link' => Link::fromTextAndUrl($this->t('this link'), Url::fromUri('http://api.drupal.org/api/drupal/includes--common.inc/function/drupal_goto/7'))->toString()]),
+      '#description' => $this->t('The response code that should be sent to the users browser. Follow @link for more information on response codes.', [
+        '@link' => Link::fromTextAndUrl($this->t('this link'), Url::fromUri('http://api.drupal.org/api/drupal/includes--common.inc/function/drupal_goto/7'))->toString(),
+      ]),
       '#attributes' => ['class' => ['rabbit-hole-redirect-response-setting']],
     ];
 
@@ -376,7 +381,10 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       $args = $fallback_options['bundle_default']->getArguments();
       $bundle_settings = $this->getBundleSettings($entity);
       $bundle_fallback = $bundle_settings->get('redirect_fallback_action');
-      $fallback_options['bundle_default'] = $this->t('Global @bundle fallback (@setting)', ['@bundle' => $args['@bundle'], '@setting' => $bundle_fallback]);
+      $fallback_options['bundle_default'] = $this->t('Global @bundle fallback (@setting)', [
+        '@bundle' => $args['@bundle'],
+        '@setting' => $bundle_fallback,
+      ]);
     }
 
     $form['rabbit_hole']['redirect']['rh_redirect_fallback_action'] = [

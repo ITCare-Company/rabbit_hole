@@ -66,22 +66,28 @@ class BehaviorSettings extends ConfigEntityBase implements BehaviorSettingsInter
 
   /**
    * Whether inherited behaviors can be edited (if this is a bundle).
+   *
+   * @var bool
    */
   protected $allow_override;
 
   /**
    * The path to use for redirects (if the action is redirect).
    *
-   * @todo It may be possible to make this reliant on a plugin instead (i.e.
-   *  the redirect plugin) - if so, we should probably do this
+   * Todo: It may be possible to make this reliant on a plugin instead (i.e.
+   *  the redirect plugin) - if so, we should probably do this.
+   *
+   * @var string
    */
   protected $redirect;
 
   /**
    * The code to use for redirects (if the action is redirect).
    *
-   * @todo It may be possible to make this reliant on a plugin instead (i.e.
-   * the redirect plugin) - if so, we should probably do this
+   * Todo: It may be possible to make this reliant on a plugin instead (i.e.
+   * the redirect plugin) - if so, we should probably do this.
+   *
+   * @var int
    */
   protected $redirect_code;
 

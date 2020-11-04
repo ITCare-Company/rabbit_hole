@@ -193,7 +193,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   }
 
   /**
-   * Test that we can save settings for entity that did not previously have them.
+   * Test saving settings for entity that did not previously have them.
    *
    * Test that an existing entity that previously didn't have settings will have
    * settings saved when the entity form is saved.
@@ -305,7 +305,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   /**
    * Loads test entity.
    *
-   * @param mixed
+   * @param mixed $id
    *   ID of loaded entity.
    *
    * @return \Drupal\Core\Entity\EntityInterface
@@ -320,7 +320,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   /**
    * Formats selector of the action input.
    *
-   * @param $action
+   * @param string $action
    *   Rabbit hole action.
    *
    * @return string
@@ -333,7 +333,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   /**
    * Returns URL of the "Edit" entity bundle page.
    *
-   * @param $bundle
+   * @param string $bundle
    *   Entity bundle id.
    *
    * @return \Drupal\Core\Url
@@ -365,7 +365,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   /**
    * Creates new entity.
    *
-   * @param $action
+   * @param string $action
    *   Rabbit Hole action.
    *
    * @return int

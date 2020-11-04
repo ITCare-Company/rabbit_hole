@@ -94,12 +94,6 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
     $plugin = $this->manager->createInstance('access_denied', ['of' => 'configuration values']);
     $this->assertInstanceOf(AccessDenied::class, $plugin, 'The access denied plugin is the correct type.');
 
-    // Test the settings form.
-    $form = $form_state = [];
-    $plugin->settingsForm($form, $form_state, 'test');
-    $this->assertEmpty($form, 'Access denied plugin has no settings form.');
-    $this->assertEmpty($form_state, 'Access denied plugin settings form state was not changed.');
-
     // Check that the plugin performs the expected action.
     $this->expectException(AccessDeniedHttpException::class);
     $plugin->performAction($this->entity);
@@ -113,12 +107,6 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
     $plugin = $this->manager->createInstance('display_page', ['of' => 'configuration values']);
     $this->assertInstanceOf(DisplayPage::class, $plugin, 'The display page plugin is the correct type.');
 
-    // Test the settings form.
-    $form = $form_state = [];
-    $plugin->settingsForm($form, $form_state, 'test');
-    $this->assertEmpty($form, 'Display page plugin has no settings form.');
-    $this->assertEmpty($form_state, 'Display page plugin settings form state was not changed.');
-
     // Check that the plugin performs the expected action.
     $this->assertEmpty($plugin->performAction($this->entity));
   }
@@ -130,12 +118,6 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
     // Check we can create an instance of the plugin.
     $plugin = $this->manager->createInstance('page_not_found', ['of' => 'configuration values']);
     $this->assertInstanceOf(PageNotFound::class, $plugin, 'The page not found plugin is the correct type.');
-
-    // Test the settings form.
-    $form = $form_state = [];
-    $plugin->settingsForm($form, $form_state, 'test');
-    $this->assertEmpty($form, 'Page not found plugin has no settings form.');
-    $this->assertEmpty($form_state, 'Page not found plugin settings form state was not changed.');
 
     // Check that the plugin performs the expected action.
     $this->expectException(NotFoundHttpException::class);
@@ -158,7 +140,8 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
   /**
    * Create a content type for testing.
    *
-   * @return int|string|null
+   * @return \Drupal\node\NodeTypeInterface
+   *   Content type entity.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
@@ -177,7 +160,8 @@ class RabbitHoleBehaviorPluginTest extends ViewTestBase {
   /**
    * Create an entity for testing.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\node\Entity\Node
+   * @return \Drupal\node\NodeInterface
+   *   Created node.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */

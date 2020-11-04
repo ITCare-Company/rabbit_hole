@@ -24,17 +24,13 @@ class UserBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    parent::setUp();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function createEntityBundle($action = NULL) {
     // We can't create a new bundle, but we can save Rabbit Hole settings.
     if (isset($action)) {
-      $this->behaviorSettingsManager->saveBehaviorSettings(['action' => $action, 'allow_override' => TRUE], 'user', NULL);
+      $this->behaviorSettingsManager->saveBehaviorSettings([
+        'action' => $action,
+        'allow_override' => TRUE,
+      ], 'user', NULL);
     }
     return NULL;
   }

@@ -40,7 +40,7 @@ function rabbit_hole_post_update_entity_type_id_and_entity_id_for_existing_behav
 
     // If the bundle entity does no longer exist, the rabbit_hole
     // behavior_setting is no longer necessary.
-    if (!$bundle_entity = $entity_type_manager->getStorage($entity_type_id)->load($entity_id)) {
+    if (!$entity_type_manager->getStorage($entity_type_id)->load($entity_id)) {
       $behavior_setting->delete();
     }
     else {

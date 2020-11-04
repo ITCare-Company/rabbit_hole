@@ -3,11 +3,7 @@
 namespace Drupal\rabbit_hole;
 
 /**
- * Interface BehaviorInvokerInterface.
- *
- * @package Drupal\rabbit_hole
+ * Defines an interface for behavior invoker service.
  */
 interface BehaviorInvokerInterface {
-
-
 }

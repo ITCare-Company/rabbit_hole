@@ -37,7 +37,10 @@ class TaxonomyBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBas
   protected function createEntityBundle($action = NULL) {
     $this->vocabulary = $this->createVocabulary();
     if (isset($action)) {
-      $this->behaviorSettingsManager->saveBehaviorSettings(['action' => $action, 'allow_override' => TRUE], 'taxonomy_vocabulary', $this->vocabulary->id());
+      $this->behaviorSettingsManager->saveBehaviorSettings([
+        'action' => $action,
+        'allow_override' => TRUE,
+      ], 'taxonomy_vocabulary', $this->vocabulary->id());
     }
     return $this->vocabulary->id();
   }

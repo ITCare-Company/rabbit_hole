@@ -40,13 +40,6 @@ class TaxonomyBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTes
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    parent::setUp();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   protected function createEntityBundle() {
     $this->bundle = $this->createVocabulary();
     return $this->bundle->id();
