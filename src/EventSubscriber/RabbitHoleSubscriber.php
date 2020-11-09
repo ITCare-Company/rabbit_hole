@@ -2,8 +2,9 @@
 
 namespace Drupal\rabbit_hole\EventSubscriber;
 
+use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\rabbit_hole\BehaviorInvoker;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
@@ -48,7 +49,7 @@ class RabbitHoleSubscriber implements EventSubscriberInterface {
    *   The event triggered by the request.
    */
   public function onRequest(KernelEvent $event) {
-    return $this->processEvent($event);
+    $this->processEvent($event);
   }
 
   /**
@@ -62,7 +63,7 @@ class RabbitHoleSubscriber implements EventSubscriberInterface {
    *   The event triggered by the response.
    */
   public function onResponse(KernelEvent $event) {
-    return $this->processEvent($event);
+    $this->processEvent($event);
   }
 
   /**
@@ -72,31 +73,17 @@ class RabbitHoleSubscriber implements EventSubscriberInterface {
    *   The event to process.
    */
   private function processEvent(KernelEvent $event) {
-    // Don't process events with HTTP exceptions - those have either been thrown
-    // by us or have nothing to do with rabbit hole.
-    if ($event->getRequest()->get('exception') != NULL) {
-      return;
-    }
+    if ($entity = $this->rabbitHoleBehaviorInvoker->getEntity($event)) {
+      try {
+        $new_response = $this->rabbitHoleBehaviorInvoker->processEntity($entity, $event->getResponse());
 
-    // Get the route from the request.
-    if ($route = $event->getRequest()->get('_route')) {
-      // Only continue if the request route is the an entity canonical.
-      if (preg_match('/^entity\.(.+)\.canonical$/', $route)) {
-        // We check for all of our known entity keys that work with rabbit hole
-        // and invoke rabbit hole behavior on the first one we find (which
-        // should also be the only one).
-        $entity_keys = $this->rabbitHoleBehaviorInvoker->getPossibleEntityTypeKeys();
-        foreach ($entity_keys as $ekey) {
-          $entity = $event->getRequest()->get($ekey);
-          if (isset($entity) && $entity instanceof ContentEntityInterface) {
-            $new_response = $this->rabbitHoleBehaviorInvoker
-              ->processEntity($entity, $event->getResponse());
-            if ($new_response instanceof Response) {
-              $event->setResponse($new_response);
-            }
-            break;
-          }
+        if ($new_response instanceof Response) {
+          $event->setResponse($new_response);
         }
+      }
+      catch (PluginNotFoundException | PluginException $e) {
+        // Do nothing if we got plugin-related exception.
+        // Other exceptions (i.e. AccessDeniedHttpException) should be accepted.
       }
     }
   }

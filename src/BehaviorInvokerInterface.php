@@ -4,11 +4,23 @@ namespace Drupal\rabbit_hole;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 
 /**
  * Defines an interface for behavior invoker service.
  */
 interface BehaviorInvokerInterface {
+
+  /**
+   * Retrieves entity to apply rabbit hole behavior from event object.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\KernelEvent $event
+   *   The kernel request event.
+   *
+   * @return ContentEntityInterface|false
+   *   Entity object if the Rabbit Hole action is applicable or FALSE otherwise.
+   */
+  public function getEntity(KernelEvent $event);
 
   /**
    * Invoke a rabbit hole behavior based on an entity's configuration.
