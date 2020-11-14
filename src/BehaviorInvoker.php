@@ -9,6 +9,7 @@ use Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginInterface;
 use Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\KernelEvent;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Default implementation of Rabbit Hole behaviors invoker.
@@ -51,6 +52,13 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
   protected $currentUser;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * BehaviorInvoker constructor.
    *
    * @param \Drupal\rabbit_hole\BehaviorSettingsManager $rabbit_hole_behavior_settings_manager
@@ -63,19 +71,23 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
    *   Entity extender service.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
   public function __construct(
     BehaviorSettingsManager $rabbit_hole_behavior_settings_manager,
     RabbitHoleBehaviorPluginManager $plugin_manager_rabbit_hole_behavior_plugin,
     RabbitHoleEntityPluginManager $plugin_manager_rabbit_hole_entity_plugin,
     EntityExtender $entity_extender,
-    AccountProxyInterface $current_user
+    AccountProxyInterface $current_user,
+    ModuleHandlerInterface $module_handler
   ) {
     $this->rhBehaviorSettingsManager = $rabbit_hole_behavior_settings_manager;
     $this->rhBehaviorPluginManager = $plugin_manager_rabbit_hole_behavior_plugin;
     $this->rhEntityPluginManager = $plugin_manager_rabbit_hole_entity_plugin;
     $this->rhEntityExtender = $entity_extender;
     $this->currentUser = $current_user;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -113,15 +125,15 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
    * {@inheritdoc}
    */
   public function processEntity(ContentEntityInterface $entity, Response $current_response = NULL) {
-    $permission = 'rabbit hole bypass ' . $entity->getEntityTypeId();
-    if ($this->currentUser->hasPermission($permission)) {
-      return NULL;
-    }
-
     $values = $this->getRabbitHoleValuesForEntity($entity);
+    $permission = 'rabbit hole bypass ' . $entity->getEntityTypeId();
+    $values['bypass_access'] = $this->currentUser->hasPermission($permission);
 
-    if (empty($values['rh_action'])) {
-      // No action set; do nothing.
+    // Allow altering Rabbit Hole values.
+    $this->moduleHandler->alter('rabbit_hole_values', $values, $entity);
+
+    // Do nothing if action is missing or access is bypassed.
+    if (empty($values['rh_action']) || $values['bypass_access']) {
       return NULL;
     }
 
@@ -152,6 +164,10 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
         $fallback_plugin = $this->rhBehaviorPluginManager->createInstance($response, []);
         $response = $fallback_plugin->performAction($entity, $current_response);
       }
+
+      // Alter the response before it is returned.
+      $this->moduleHandler->alter('rabbit_hole_response', $response, $entity);
+
       return $response;
     }
     // All other cases return NULL, meaning the response is unchanged.
