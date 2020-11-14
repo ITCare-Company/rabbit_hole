@@ -26,15 +26,6 @@ function rabbit_hole_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_theme().
- */
-function rabbit_hole_theme() {
-  $theme = [];
-
-  return $theme;
-}
-
-/**
  * Handle general aspects of rabbit hole form submission.
  *
  * @param array $form
