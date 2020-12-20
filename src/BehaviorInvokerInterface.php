@@ -23,6 +23,17 @@ interface BehaviorInvokerInterface {
   public function getEntity(KernelEvent $event);
 
   /**
+   * Get the behavior plugin for the given entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity to apply rabbit hole behavior on.
+   *
+   * @return \Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginBase|NULL
+   *   Rabbit Hole action plugin or NULL.
+   */
+  public function getBehaviorPlugin(ContentEntityInterface $entity);
+
+  /**
    * Invoke a rabbit hole behavior based on an entity's configuration.
    *
    * This assumes the entity is configured for use with Rabbit Hole - if you
