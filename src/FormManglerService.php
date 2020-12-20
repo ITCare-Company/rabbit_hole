@@ -53,6 +53,20 @@ class FormManglerService {
   protected $behaviorInvoker;
 
   /**
+   * Bundles information.
+   *
+   * @var array
+   */
+  protected $allBundleInfo;
+
+  /**
+   * The behavior settings manager.
+   *
+   * @var \Drupal\rabbit_hole\BehaviorSettingsManager
+   */
+  private $rhBehaviorSettingsManager;
+
+  /**
    * Constructor.
    */
   public function __construct(
@@ -180,7 +194,9 @@ class FormManglerService {
     else {
       // Attach extra submit for redirect in case of entity form.
       $submit_location = $entity_plugin->getFormSubmitHandlerAttachLocations($attach, $form_state);
-      $this->attachFormSubmit($attach, $submit_location, [$this, 'redirectToEntityEditForm']);
+      $this->attachFormSubmit($attach, $submit_location, [
+        $this, 'redirectToEntityEditForm',
+      ]);
 
       $bundle_entity_type = $entity_type->getBundleEntityType()
         ?: $entity_type->id();

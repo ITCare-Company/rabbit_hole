@@ -18,7 +18,7 @@ class RabbitHoleSubscriber implements EventSubscriberInterface {
   /**
    * Drupal\rabbit_hole\BehaviorInvoker definition.
    *
-   * @var Drupal\rabbit_hole\BehaviorInvoker
+   * @var \Drupal\rabbit_hole\BehaviorInvoker
    */
   protected $rabbitHoleBehaviorInvoker;
 
