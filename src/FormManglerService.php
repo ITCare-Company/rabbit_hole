@@ -3,6 +3,7 @@
 namespace Drupal\rabbit_hole;
 
 use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfo;
@@ -20,6 +21,8 @@ use Drupal\Component\Utility\UrlHelper;
  * Provides necessary form alterations.
  */
 class FormManglerService {
+
+  use DependencySerializationTrait;
   use StringTranslationTrait;
 
   const RABBIT_HOLE_USE_DEFAULT = 'bundle_default';
