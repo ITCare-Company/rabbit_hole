@@ -80,13 +80,17 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
     RabbitHoleEntityPluginManager $plugin_manager_rabbit_hole_entity_plugin,
     EntityExtender $entity_extender,
     AccountProxyInterface $current_user,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler = NULL
   ) {
     $this->rhBehaviorSettingsManager = $rabbit_hole_behavior_settings_manager;
     $this->rhBehaviorPluginManager = $plugin_manager_rabbit_hole_behavior_plugin;
     $this->rhEntityPluginManager = $plugin_manager_rabbit_hole_entity_plugin;
     $this->rhEntityExtender = $entity_extender;
     $this->currentUser = $current_user;
+    if (!$module_handler) {
+      @trigger_error('The module_handler service must be passed to ' . __NAMESPACE__ . '\BehaviorInvoker::__construct(). It was added in 8.x-1.0-beta8 and will be required in 2.0 version.', E_USER_DEPRECATED);
+      $module_handler = \Drupal::moduleHandler();
+    }
     $this->moduleHandler = $module_handler;
   }
 
