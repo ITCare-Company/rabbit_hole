@@ -349,7 +349,7 @@ class FormManglerService {
     if ($rh_action == 'page_redirect') {
       $redirect = $form_state->getValue('rh_redirect');
 
-      if (!UrlHelper::isExternal($redirect)) {
+      if (!UrlHelper::isExternal($redirect) && $redirect !== '<front>') {
         $scheme = parse_url($redirect, PHP_URL_SCHEME);
 
         // Check if internal URL matches requirements of

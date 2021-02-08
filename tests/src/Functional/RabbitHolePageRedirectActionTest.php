@@ -76,6 +76,8 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
 
     $this->assertPageRedirect('/node', '/node');
     $this->assertPageRedirect('https://example.com', 'https://example.com');
+    $this->assertPageRedirect('/', '/');
+    $this->assertPageRedirect('<front>', '/');
     $this->assertPageRedirect('/<front>', '/');
     $this->assertPageRedirect('internal:/node', '/node');
     $this->assertPageRedirect('entity:node/' . $test_node->id(), $test_node->toUrl());
