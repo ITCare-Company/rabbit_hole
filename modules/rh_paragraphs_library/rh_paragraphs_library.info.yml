@@ -1,0 +1,8 @@
+name: Rabbit Hole Paragraphs Library
+type: module
+description: Adds Rabbit Hole functionality for paragraphs library items.
+core: 8.x
+core_version_requirement: ^8 || ^9
+dependencies:
+  - rabbit_hole:rabbit_hole
+  - paragraphs:paragraphs_library
