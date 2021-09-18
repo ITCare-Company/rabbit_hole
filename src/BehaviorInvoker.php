@@ -155,7 +155,7 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
       // Execute a fallback action until we have correct response object.
       // It allows us to have a chain of fallback actions until we execute the
       // final one.
-      while (!$response instanceof Response && is_string($response) && $this->rhBehaviorPluginManager->getDefinition($response, FALSE) !== NULL) {
+      while (!$response instanceof Response && \is_string($response) && $this->rhBehaviorPluginManager->getDefinition($response, FALSE) !== NULL) {
         $fallback_plugin = $this->rhBehaviorPluginManager->createInstance($response, []);
         $response = $fallback_plugin->performAction($entity, $current_response);
       }
