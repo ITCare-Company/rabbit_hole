@@ -320,7 +320,6 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       '#default_value' => $redirect,
       '#description' => '<p>' . implode('</p><p>', $description) . '</p>',
       '#attributes' => ['class' => ['rabbit-hole-redirect-setting']],
-      '#rows' => substr_count($redirect, "\r\n") + 2,
       '#element_validate' => [],
       '#after_build' => [],
       '#states' => [
