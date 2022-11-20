@@ -48,7 +48,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->behaviorSettingsManager = $this->container->get('rabbit_hole.behavior_settings_manager');

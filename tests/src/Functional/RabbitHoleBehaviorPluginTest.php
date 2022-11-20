@@ -51,7 +51,7 @@ class RabbitHoleBehaviorPluginTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->manager = $this->container->get('plugin.manager.rabbit_hole_behavior_plugin');
 
