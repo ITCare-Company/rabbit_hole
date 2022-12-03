@@ -1,5 +1,6 @@
-CONTENTS OF THIS FILE
----------------------
+# Rabbit Hole
+
+## CONTENTS OF THIS FILE
 
  * Introduction
  * Requirements
@@ -7,36 +8,32 @@ CONTENTS OF THIS FILE
  * Configuration
 
 
-INTRODUCTION
-------------
+## INTRODUCTION
 
 Rabbit Hole adds the ability to control what should happen when an entity is
 being viewed at its own page.
 
  * For a full description of the module, visit the project page:
-   http://drupal.org/project/rabbit_hole
+   <http://drupal.org/project/rabbit_hole>
 
  * To submit bug reports and feature suggestions, or to track changes:
-      https://www.drupal.org/project/issues/rabbit_hole
+      <https://www.drupal.org/project/issues/rabbit_hole>
 
 
-REQUIREMENTS
-------------
+## REQUIREMENTS
 
 This module requires no modules outside of Drupal core.
 
 
-INSTALLATION
-------------
+## INSTALLATION
 
  * Install as you would normally install a contributed Drupal module.
-   See: https://www.drupal.org/node/895232 for further information.
+   See: <https://www.drupal.org/docs/extending-drupal/installing-modules> for further information.
  * Enable the specified submodule for Rabbit Hole functionality on specific
    entity types (Files, Group, Media entity, Nodes, Taxonomy, Users).
 
 
-CONFIGURATION
--------------
+## CONFIGURATION
 
  * Configure the user permissions in Administration » People » Permissions:
 
