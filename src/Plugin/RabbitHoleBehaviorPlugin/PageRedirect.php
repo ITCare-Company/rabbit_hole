@@ -413,15 +413,18 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     $fields['rh_redirect'] = BaseFieldDefinition::create('string')
       ->setName('rh_redirect')
       ->setLabel($this->t('Rabbit Hole redirect path.'))
-      ->setDescription($this->t('The path to where the user should get redirected to.'));
+      ->setDescription($this->t('The path to where the user should get redirected to.'))
+      ->setTranslatable(TRUE);
     $fields['rh_redirect_response'] = BaseFieldDefinition::create('integer')
       ->setName('rh_redirect_response')
       ->setLabel($this->t('Rabbit Hole redirect response code'))
-      ->setDescription($this->t('Specifies the HTTP response code that should be used when perform a redirect.'));
+      ->setDescription($this->t('Specifies the HTTP response code that should be used when perform a redirect.'))
+      ->setTranslatable(TRUE);
     $fields['rh_redirect_fallback_action'] = BaseFieldDefinition::create('string')
       ->setName('rh_redirect_fallback_action')
       ->setLabel($this->t('Rabbit Hole redirect fallback action'))
-      ->setDescription($this->t('Specifies the action that should be used when the redirect path is invalid or empty.'));
+      ->setDescription($this->t('Specifies the action that should be used when the redirect path is invalid or empty.'))
+      ->setTranslatable(TRUE);
   }
 
   /**

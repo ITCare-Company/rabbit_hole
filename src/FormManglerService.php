@@ -164,15 +164,43 @@ class FormManglerService {
     $form_id
   ) {
 
-    $entity_type = $this->entityTypeManager->getStorage($entity_type_id)
-      ->getEntityType();
-
     if ($entity === NULL) {
       $is_bundle_or_entity_type = TRUE;
     }
     else {
       $is_bundle_or_entity_type = $this->isEntityBundle($entity);
     }
+
+    // Do not display "Rabbit Hole" settings if this is an entity translation
+    // form and all Rabbit Hole fields marked as not-translatable.
+    if (!$is_bundle_or_entity_type) {
+      $entity_langcode = $entity->getUntranslated()->language()->getId();
+      $is_translation = $entity->isNewTranslation() || ($entity->language()->getId() != $entity_langcode);
+      $hide_untranslatable_fields = $entity->isDefaultTranslationAffectedOnly() && !$entity->isDefaultTranslation();
+
+      if ($is_translation && $hide_untranslatable_fields) {
+        $has_translatable_field = FALSE;
+        $rh_fields = [
+          'rh_action',
+          'rh_redirect',
+          'rh_redirect_response',
+          'rh_redirect_fallback_action',
+        ];
+        foreach ($rh_fields as $rh_field) {
+          if ($entity->getFieldDefinition($rh_field)->isTranslatable()) {
+            $has_translatable_field = TRUE;
+            break;
+          }
+        }
+
+        if (!$has_translatable_field) {
+          return;
+        }
+      }
+    }
+
+    $entity_type = $this->entityTypeManager->getStorage($entity_type_id)
+      ->getEntityType();
 
     $bundle_settings = NULL;
     $bundle = isset($entity) ? $entity->bundle() : $entity_type_id;
