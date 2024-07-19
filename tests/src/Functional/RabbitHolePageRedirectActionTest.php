@@ -62,7 +62,7 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
     $this->assertPageRedirect($destination_path, $destination_path, 301);
     $this->assertPageRedirect($destination_path, $destination_path, 302);
     $this->assertPageRedirect($destination_path, $destination_path, 303);
-    // TODO: Figure out what should happen on 304 code.
+    // @todo Figure out what should happen on 304 code.
     // $this->assertUrlRedirect(304);.
     $this->assertPageRedirect($destination_path, $destination_path, 305);
     $this->assertPageRedirect($destination_path, $destination_path, 307);

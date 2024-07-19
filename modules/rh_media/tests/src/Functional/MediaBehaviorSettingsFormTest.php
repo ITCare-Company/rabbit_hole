@@ -42,7 +42,7 @@ class MediaBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
    * {@inheritdoc}
    */
   protected function createEntityBundle() {
-    // TODO: Remove 2nd parameter once https://www.drupal.org/node/3174874 is
+    // @todo Remove 2nd parameter once https://www.drupal.org/node/3174874 is
     // resolved.
     $this->bundle = $this->createMediaType('test', [
       'id' => mb_strtolower($this->randomMachineName()),

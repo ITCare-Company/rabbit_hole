@@ -27,6 +27,13 @@ abstract class RabbitHoleBehaviorInvocationTestBase extends BrowserTestBase {
   protected $behaviorSettingsManager;
 
   /**
+   * The entity type.
+   *
+   * @var string
+   */
+  protected $entityType;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {

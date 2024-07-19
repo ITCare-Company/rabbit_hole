@@ -30,8 +30,7 @@ class EntityExtender implements EntityExtenderInterface {
   /**
    * Constructor.
    */
-  public function __construct(RabbitHoleBehaviorPluginManager $plugin_manager_rabbit_hole_behavior_plugin,
-    RabbitHoleEntityPluginManager $plugin_manager_rabbit_hole_entity_plugin) {
+  public function __construct(RabbitHoleBehaviorPluginManager $plugin_manager_rabbit_hole_behavior_plugin, RabbitHoleEntityPluginManager $plugin_manager_rabbit_hole_entity_plugin) {
     $this->rhBehaviorPluginManager = $plugin_manager_rabbit_hole_behavior_plugin;
     $this->rhEntityPluginManager = $plugin_manager_rabbit_hole_entity_plugin;
   }
@@ -50,6 +49,7 @@ class EntityExtender implements EntityExtenderInterface {
     if (\in_array($entity_type_id, $entity_types)) {
       return $this->getGeneralExtraFields();
     }
+    return [];
   }
 
   /**
