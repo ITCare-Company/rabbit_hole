@@ -32,7 +32,7 @@ class RabbitHoleSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events['kernel.request'] = ['onRequest', 28];
     $events['kernel.response'] = ['onResponse'];
     return $events;

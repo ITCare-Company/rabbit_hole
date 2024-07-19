@@ -1,7 +1,7 @@
 name: Rabbit Hole taxonomy
 type: module
 description: Adds Rabbit Hole functionality for taxonomy.
-core_version_requirement: ^8 || ^9 || ^10
+core_version_requirement: ^9.5 || ^10 || ^11
 dependencies:
   - rabbit_hole:rabbit_hole
   - drupal:taxonomy

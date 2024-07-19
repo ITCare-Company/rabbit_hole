@@ -28,7 +28,7 @@ class RabbitHoleBehaviorSettingsEntityMethodsTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rabbit_hole'];
+  protected static $modules = ['rabbit_hole'];
 
   /**
    * Drupal\Core\Config\ConfigFactory definition.

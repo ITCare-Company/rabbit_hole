@@ -31,7 +31,7 @@ class RabbitHolePageRedirectActionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rh_node', 'user', 'media', 'token'];
+  protected static $modules = ['rh_node', 'user', 'media', 'token'];
 
   /**
    * The behavior settings manager.

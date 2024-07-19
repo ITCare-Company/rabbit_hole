@@ -22,7 +22,7 @@ abstract class RabbitHoleBehaviorSettingsFormTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rabbit_hole'];
+  protected static $modules = ['rabbit_hole'];
 
   /**
    * Admin user.

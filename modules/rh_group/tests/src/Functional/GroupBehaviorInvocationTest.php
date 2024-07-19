@@ -20,7 +20,7 @@ class GroupBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rh_group', 'group'];
+  protected static $modules = ['rh_group', 'group'];
 
   /**
    * Group type.
@@ -79,7 +79,7 @@ class GroupBehaviorInvocationTest extends RabbitHoleBehaviorInvocationTestBase {
    * {@inheritdoc}
    */
   protected function getViewPermissions() {
-    return ['bypass group access'];
+    return [];
   }
 
 }

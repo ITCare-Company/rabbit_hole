@@ -36,7 +36,7 @@ class MediaBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rh_media', 'media', 'media_test_source'];
+  protected static $modules = ['rh_media', 'media', 'media_test_source'];
 
   /**
    * {@inheritdoc}

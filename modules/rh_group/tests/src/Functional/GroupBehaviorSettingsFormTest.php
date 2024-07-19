@@ -33,7 +33,7 @@ class GroupBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rh_group', 'group'];
+  protected static $modules = ['rh_group', 'group'];
 
   /**
    * {@inheritdoc}
@@ -120,7 +120,7 @@ class GroupBehaviorSettingsFormTest extends RabbitHoleBehaviorSettingsFormTestBa
    * {@inheritdoc}
    */
   protected function getAdminPermissions() {
-    return ['administer group', 'bypass group access', 'access group overview'];
+    return ['administer group', 'access group overview'];
   }
 
 }
