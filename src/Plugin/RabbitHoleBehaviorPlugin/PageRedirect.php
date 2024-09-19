@@ -371,7 +371,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
       $bundle_fallback = $bundle_settings->get('redirect_fallback_action');
       $fallback_options['bundle_default'] = $this->t('Global @bundle fallback (@setting)', [
         '@bundle' => $args['@bundle'],
-        '@setting' => $bundle_fallback,
+        '@setting' => $bundle_fallback ?? $args['@setting'],
       ]);
     }
 
