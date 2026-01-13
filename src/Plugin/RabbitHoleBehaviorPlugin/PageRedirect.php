@@ -256,7 +256,7 @@ class PageRedirect extends RabbitHoleBehaviorPluginBase implements ContainerFact
     $form_id,
     EntityInterface $entity = NULL,
     $entity_is_bundle = FALSE,
-    ImmutableConfig $bundle_settings = NULL,
+    ImmutableConfig $bundle_settings = NULL
   ) {
 
     $redirect = NULL;
