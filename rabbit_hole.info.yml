@@ -1,5 +1,5 @@
 name: Rabbit Hole
 type: module
 description: Basic functionality that is shared among the different Rabbit Hole modules.
-core_version_requirement: ^9.5 || ^10 || ^11
+core_version_requirement: ^9.5 || ^10 || ^11 || ^12
 package: Other
