@@ -5,6 +5,7 @@ namespace Drupal\rabbit_hole\Plugin;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\rabbit_hole\Attribute\RabbitHoleBehaviorPlugin as RabbitHoleBehaviorPluginAttribute;
 
 /**
  * Provides the Rabbit hole behavior plugin plugin manager.
@@ -23,7 +24,7 @@ class RabbitHoleBehaviorPluginManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/RabbitHoleBehaviorPlugin', $namespaces, $module_handler, 'Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginInterface', 'Drupal\rabbit_hole\Annotation\RabbitHoleBehaviorPlugin');
+    parent::__construct('Plugin/RabbitHoleBehaviorPlugin', $namespaces, $module_handler, 'Drupal\rabbit_hole\Plugin\RabbitHoleBehaviorPluginInterface', RabbitHoleBehaviorPluginAttribute::class, 'Drupal\rabbit_hole\Annotation\RabbitHoleBehaviorPlugin');
 
     $this->alterInfo('rabbit_hole_rabbit_hole_behavior_plugin_info');
     $this->setCacheBackend($cache_backend, 'rabbit_hole_rabbit_hole_behavior_plugin_plugins');

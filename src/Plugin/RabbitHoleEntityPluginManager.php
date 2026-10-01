@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\rabbit_hole\Attribute\RabbitHoleEntityPlugin as RabbitHoleEntityPluginAttribute;
 
 /**
  * Provides the Rabbit hole entity plugin manager.
@@ -33,7 +34,7 @@ class RabbitHoleEntityPluginManager extends DefaultPluginManager {
    *   The entity type manager.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct('Plugin/RabbitHoleEntityPlugin', $namespaces, $module_handler, 'Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginInterface', 'Drupal\rabbit_hole\Annotation\RabbitHoleEntityPlugin');
+    parent::__construct('Plugin/RabbitHoleEntityPlugin', $namespaces, $module_handler, 'Drupal\rabbit_hole\Plugin\RabbitHoleEntityPluginInterface', RabbitHoleEntityPluginAttribute::class, 'Drupal\rabbit_hole\Annotation\RabbitHoleEntityPlugin');
 
     $this->alterInfo('rabbit_hole_rabbit_hole_entity_plugin_info');
     $this->setCacheBackend($cache_backend, 'rabbit_hole_rabbit_hole_entity_plugin_plugins');
