@@ -95,12 +95,12 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
     $request = $event->getRequest();
     // Don't process events with HTTP exceptions - those have either been thrown
     // by us or have nothing to do with rabbit hole.
-    if ($request->get('exception') != NULL) {
+    if ($request->attributes->get('exception') != NULL) {
       return FALSE;
     }
 
     // Get the route from the request.
-    if ($route = $request->get('_route')) {
+    if ($route = $request->attributes->get('_route')) {
       // Only continue if the request route is the an entity canonical.
       if (preg_match('/^entity\.(.+)\.canonical$/', $route)) {
         // We check for all of our known entity keys that work with rabbit hole
@@ -108,7 +108,7 @@ class BehaviorInvoker implements BehaviorInvokerInterface {
         // should also be the only one).
         $entity_keys = $this->getPossibleEntityTypeKeys();
         foreach ($entity_keys as $ekey) {
-          $entity = $request->get($ekey);
+          $entity = $request->attributes->get($ekey);
           if (isset($entity) && $entity instanceof ContentEntityInterface) {
             return $entity;
           }
